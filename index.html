@@ -109,7 +109,7 @@
       letter-spacing: 1px;
     }
 
-    /* CONTAINER COM RECORTE PARA ENQUADRAR SÓ A TABELA */
+    /* CONTAINER ENQUADRADO PARA O RETRATO DA PLANILHA */
     .table-crop-container {
       width: 100%;
       height: 680px;
@@ -120,9 +120,9 @@
 
     iframe {
       position: absolute;
-      top: -10px;
-      left: -5px;
-      width: 105%;
+      top: 0;
+      left: 0;
+      width: 100%;
       height: 720px;
       border: none;
     }
@@ -161,12 +161,12 @@
 
   <div class="cyber-card">
     <div class="card-header">
-      <span>// MATRIZ OS - RESUMO DO MODELO</span>
+      <span>// RESUMO DO MODELO</span>
       <span style="color: var(--magenta-glow);">LIVE</span>
     </div>
 
     <div class="table-crop-container" id="display-area">
-      <div class="loading">CARREGANDO HOLOGRAMA DA OS...</div>
+      <div class="loading">CARREGANDO DADOS...</div>
     </div>
 
     <div class="card-footer">
@@ -180,8 +180,8 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Usa a renderização 'pubhtml' para manter o estilo visual 100% fiel à planilha original
-      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/pubhtml?widget=false&headers=false&chrome=false`;
+      // Força a renderização em preview da aba 'Cliente' sem barras de interface
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/preview?gid=1682700545&rm=minimal`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
