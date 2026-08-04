@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S.O.S - Visualizador Cyber OS</title>
+  <title>S.O.S - Área do Cliente</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
@@ -27,11 +27,10 @@
       background-size: 100% 100%, 20px 20px, 20px 20px;
       color: #fff;
       font-family: 'Rajdhani', sans-serif;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       padding: 12px;
-      overflow: hidden;
     }
 
     header {
@@ -63,18 +62,19 @@
 
     .cyber-frame-wrapper {
       flex: 1;
+      min-height: 80vh;
       position: relative;
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
+      background: #ffffff;
+      border: 2px solid var(--cyan-glow);
       border-radius: 12px;
       overflow: hidden;
-      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.1);
+      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
       display: flex;
       flex-direction: column;
     }
 
     .frame-header {
-      background: rgba(0, 240, 255, 0.08);
+      background: #0d1421;
       padding: 8px 15px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.75rem;
@@ -95,8 +95,8 @@
     iframe {
       width: 100%;
       height: 100%;
+      min-height: 600px;
       border: none;
-      filter: contrast(105%) brightness(98%);
     }
 
     .loading {
@@ -115,16 +115,16 @@
 
   <header>
     <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
-    <div class="lote-badge">DISPLAY OS</div>
+    <div class="lote-badge">ÁREA DO CLIENTE</div>
   </header>
 
   <div class="cyber-frame-wrapper">
     <div class="frame-header">
-      <span>// MATRIZ DE ACOMPANHAMENTO DE MODELO</span>
-      <span style="color: var(--magenta-glow);">● LIVE VIEW</span>
+      <span>// ORÇAMENTO DO MODELO</span>
+      <span style="color: var(--magenta-glow);">● AO VIVO</span>
     </div>
     <div class="iframe-container" id="display-area">
-      <div class="loading">CONECTANDO MATRIZ VISUAL...</div>
+      <div class="loading">CARREGANDO DADOS DO CLIENTE...</div>
     </div>
   </div>
 
@@ -133,8 +133,8 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Carrega o documento no modo limpo de renderização visual
-      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?widget=false&chrome=false`;
+      // Puxa APENAS a aba chamada 'Cliente'
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:html&sheet=Cliente`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
