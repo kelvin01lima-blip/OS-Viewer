@@ -36,9 +36,10 @@
       overflow-x: hidden;
     }
 
+    /* TOPO FUTURISTA HUD */
     header {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
       padding: 12px 18px;
@@ -83,9 +84,10 @@
       100% { opacity: 0.3; }
     }
 
+    /* MOLDURA FUTURISTA */
     .cyber-card {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       background: rgba(13, 20, 33, 0.95);
       border: 2px solid var(--cyan-glow);
       border-radius: 12px;
@@ -107,6 +109,7 @@
       letter-spacing: 1px;
     }
 
+    /* CONTAINER COM RECORTE PARA ENQUADRAR SÓ A TABELA */
     .table-crop-container {
       width: 100%;
       height: 680px;
@@ -177,8 +180,8 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Usa a busca universal pelo nome exato da aba 'Cliente' sem depender de ID de aba antigo
-      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:html&sheet=Cliente`;
+      // Usa a renderização 'pubhtml' para manter o estilo visual 100% fiel à planilha original
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/pubhtml?widget=false&headers=false&chrome=false`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
