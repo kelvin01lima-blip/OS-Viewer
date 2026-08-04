@@ -10,12 +10,11 @@
   <style>
     :root {
       --bg-dark: #080b10;
-      --panel-bg: rgba(13, 20, 33, 0.9);
+      --panel-bg: rgba(13, 20, 33, 0.95);
       --cyan-glow: #00f0ff;
       --magenta-glow: #ff0055;
       --green-glow: #00ff66;
-      --yellow-glow: #eab308;
-      --border-color: rgba(0, 240, 255, 0.25);
+      --border-color: rgba(0, 240, 255, 0.3);
       --text-dim: #94a3b8;
     }
 
@@ -24,232 +23,104 @@
     body {
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.1) 0%, transparent 50%),
-        linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 25px 25px, 25px 25px;
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 20px 20px, 20px 20px;
       color: #f8fafc;
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
-      padding: 15px;
+      padding: 10px;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      align-items: center;
     }
 
-    .container { width: 100%; max-width: 650px; margin: 0 auto; }
+    .container {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      height: calc(100vh - 20px);
+    }
 
     header {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
-      padding: 15px 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
     }
 
-    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
+    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; }
     .brand-title span { color: var(--cyan-glow); }
 
     .lote-badge {
       background: rgba(0, 240, 255, 0.15);
       border: 1px solid var(--cyan-glow);
       color: var(--cyan-glow);
-      padding: 4px 12px;
+      padding: 4px 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: bold;
       border-radius: 4px;
     }
 
-    .card-os {
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: inset 0 0 15px rgba(0, 0, 0, 0.5);
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-      background: rgba(4, 8, 15, 0.6);
-      padding: 15px;
+    .frame-wrapper {
+      flex: 1;
+      width: 100%;
+      background: #ffffff;
+      border: 2px solid var(--cyan-glow);
       border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+      position: relative;
     }
 
-    .info-item label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; }
-    .info-item span { font-size: 1.05rem; font-weight: 700; color: #fff; }
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
 
-    .section-header {
+    .status-bar {
+      margin-top: 8px;
+      text-align: center;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.85rem;
+      font-size: 0.7rem;
       color: var(--cyan-glow);
-      margin: 20px 0 10px 0;
-      text-transform: uppercase;
       letter-spacing: 1px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
-    .section-header::before { content: '//'; color: var(--magenta-glow); }
-
-    table.cyber-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    table.cyber-table th {
-      background: rgba(0, 240, 255, 0.08);
-      color: var(--cyan-glow);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.75rem;
-      padding: 8px;
-      text-align: left;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    table.cyber-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.95rem; }
-    .val-total { font-weight: bold; color: var(--green-glow); text-align: right; }
-
-    .total-box {
-      background: rgba(0, 240, 255, 0.05);
-      border: 1px solid var(--cyan-glow);
-      padding: 15px;
-      border-radius: 8px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-    }
-
-    .total-box .price {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--green-glow);
-      text-shadow: 0 0 10px var(--green-glow);
-    }
-
-    .loading { text-align: center; padding: 40px; font-family: 'Orbitron', sans-serif; color: var(--cyan-glow); letter-spacing: 2px; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
-      <div class="lote-badge" id="lbl-lote">CARREGANDO...</div>
+      <div class="brand-title">S.O.S <span>SEMIJOIAS</span> // OS</div>
+      <div class="lote-badge">SISTEMA ATIVO</div>
     </header>
 
-    <div class="card-os" id="main-card">
-      <div class="loading">SINCRO DE DADOS COM DRIVE...</div>
+    <div class="frame-wrapper">
+      <iframe id="sheet-frame" src="about:blank"></iframe>
     </div>
+
+    <div class="status-bar">// DADOS SINCRONIZADOS EM TEMPO REAL COM O GOOGLE DRIVE</div>
   </div>
 
   <script>
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe5487-DqVaD9jBbBKb-INxi70ANWwqIcImeEbGspjIEMyYQctvGYGnbbno-I8L8CG/exec";
-
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '';
 
-    function carregarDados() {
-      const callbackName = 'cb_' + Math.round(100000 * Math.random());
-      
-      window[callbackName] = function(data) {
-        renderizarPagina(data);
-        if (document.getElementById(callbackName)) {
-          document.body.removeChild(document.getElementById(callbackName));
-        }
-        delete window[callbackName];
-      };
-
-      const script = document.createElement('script');
-      script.id = callbackName;
-      script.src = SCRIPT_URL + '?id=' + encodeURIComponent(planId) + '&callback=' + callbackName;
-      document.body.appendChild(script);
+    if (planId) {
+      document.getElementById('sheet-frame').src = `https://docs.google.com/spreadsheets/d/${planId}/htmlview`;
+    } else {
+      document.getElementById('sheet-frame').srcdoc = `<h3 style="font-family:sans-serif; text-align:center; margin-top:50px; color:#333;">Cole o link de uma planilha no gerador de QR Code para visualizar os dados aqui.</h3>`;
     }
-
-    function fmtMoeda(val) {
-      if (typeof val === 'number') return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-      return val || 'R$ 0,00';
-    }
-
-    function renderizarPagina(data) {
-      document.getElementById('lbl-lote').innerText = 'LOTE ' + (data.lote || '---');
-
-      let servicosHTML = '';
-      if (data.servicos && data.servicos.length > 0) {
-        data.servicos.forEach(s => {
-          servicosHTML += `
-            <tr>
-              <td>${s.nome}</td>
-              <td style="text-align: center;">${s.qtd || 0}</td>
-              <td class="val-total">${fmtMoeda(s.total)}</td>
-            </tr>
-          `;
-        });
-      }
-
-      const htmlContent = `
-        <div class="section-header">INFORMAÇÕES DO MODELO</div>
-        <div class="info-grid">
-          <div class="info-item"><label>CLIENTE</label><span>${data.cliente || '---'}</span></div>
-          <div class="info-item"><label>LOTE</label><span style="color: var(--cyan-glow);">${data.lote || '---'}</span></div>
-          <div class="info-item"><label>FORNECEDOR</label><span>${data.fornecedor || '---'}</span></div>
-          <div class="info-item"><label>CATEGORIA</label><span>${data.categoria || '---'}</span></div>
-          <div class="info-item"><label>MODELO / CÓDIGO</label><span>${data.modelo || '---'}</span></div>
-          <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${data.codigoProd || '---'}</span></div>
-          <div class="info-item"><label>PESO UNITÁRIO</label><span>${data.pesoUnit || 0} g</span></div>
-          <div class="info-item"><label>PESO TOTAL</label><span>${data.pesoTotal || '---'}</span></div>
-          <div class="info-item"><label>TAMANHO</label><span>${data.tamanho || '---'}</span></div>
-          <div class="info-item"><label>TEM LADO?</label><span>${data.temLado || '---'}</span></div>
-          <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${data.banhoOuroQtd || 0}</span></div>
-          <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${data.banhoPrataQtd || 0}</span></div>
-          <div class="info-item"><label>ADICIONAL CORRENTE</label><span>${data.corrente || '---'}</span></div>
-          <div class="info-item"><label>QTD TOTAL PEÇAS</label><span>${data.qtdTotal || 0} pçs</span></div>
-        </div>
-
-        <div class="section-header">SERVIÇOS & COMPOSIÇÃO</div>
-        <table class="cyber-table">
-          <thead>
-            <tr>
-              <th>SERVIÇO</th>
-              <th style="text-align: center;">QTD</th>
-              <th style="text-align: right;">VALOR TOTAL</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${servicosHTML}
-          </tbody>
-        </table>
-
-        <div class="section-header">CUSTOS ADICIONAIS DE PRODUÇÃO</div>
-        <table class="cyber-table">
-          <tbody>
-            <tr><td>Custo Banho Ouro</td><td class="val-total">${fmtMoeda(data.banhoOuro)}</td></tr>
-            <tr><td>Custo Banho Prata</td><td class="val-total">${fmtMoeda(data.banhoPrata)}</td></tr>
-            <tr><td>Verniz Cataforético</td><td class="val-total">${fmtMoeda(data.verniz)}</td></tr>
-            <tr><td>Insumos</td><td class="val-total">${fmtMoeda(data.insumos)}</td></tr>
-          </tbody>
-        </table>
-
-        <div class="total-box">
-          <div>
-            <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">VALOR BRUTO ESTIMADO</span>
-            <div style="font-size: 0.75rem; color: var(--cyan-glow);">ORÇAMENTO POR MODELO</div>
-          </div>
-          <div class="price">${fmtMoeda(data.valorBruto)}</div>
-        </div>
-      `;
-
-      document.getElementById('main-card').innerHTML = htmlContent;
-    }
-
-    window.onload = carregarDados;
   </script>
 </body>
 </html>
