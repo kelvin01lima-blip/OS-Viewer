@@ -147,7 +147,7 @@
     </header>
 
     <div class="card-os" id="main-card">
-      <div class="loading">CARREGANDO MATRIZ DE BANHOS E SERVIÇOS...</div>
+      <div class="loading">MAPEANDO MATRIZ DE DADOS S.O.S...</div>
     </div>
   </div>
 
@@ -155,13 +155,14 @@
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '';
 
-    async function carregarDados() {
+    async function carregarDadosUltraInteligente() {
       if (!planId) {
         document.getElementById('main-card').innerHTML = '<div class="loading">NENHUMA PLANILHA SELECIONADA</div>';
         return;
       }
 
       try {
+        // Busca os dados via API do Google em formato JSON
         const url = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:json`;
         const res = await fetch(url);
         const text = await res.text();
@@ -170,85 +171,109 @@
         const json = JSON.parse(jsonString);
         const rows = json.table.rows;
 
-        function getCel(r, c) {
-          try {
-            if (rows[r] && rows[r].c && rows[r].c[c] && rows[r].c[c].v !== null) {
-              return rows[r].c[c].f ? rows[r].c[c].f : String(rows[r].c[c].v);
+        // Converte toda a planilha em uma lista plana para busca dinâmica de palavras
+        let cells = [];
+        for (let r = 0; r < rows.length; r++) {
+          if (!rows[r] || !rows[r].c) continue;
+          for (let c = 0; c < rows[r].c.length; c++) {
+            let cell = rows[r].c[c];
+            if (cell && cell.v !== null && cell.v !== "") {
+              let valStr = String(cell.v).trim();
+              let valFmt = cell.f ? cell.f : valStr;
+              cells.push({ r: r, c: c, v: valStr, f: valFmt });
             }
-          } catch(e) {}
+          }
+        }
+
+        // Função para encontrar valor abaixo ou perto de um título
+        function findValNear(keyword, direction = 'down') {
+          let kwLower = keyword.toLowerCase();
+          let target = cells.find(item => item.v.toLowerCase() === kwLower || item.v.toLowerCase().includes(kwLower));
+          
+          if (!target) return '---';
+
+          if (direction === 'down') {
+            // Procura a célula na mesma coluna (ou perto) nas linhas imediatamente abaixo
+            let below = cells.filter(item => item.r > target.r && item.r <= target.r + 3 && Math.abs(item.c - target.c) <= 2);
+            if (below.length > 0) {
+              // Retorna a primeira célula válida encontrada abaixo
+              return below[0].f;
+            }
+          } else if (direction === 'right') {
+            // Procura a célula na mesma linha do lado direito
+            let right = cells.filter(item => item.r === target.r && item.c > target.c);
+            if (right.length > 0) {
+              return right[0].f;
+            }
+          }
           return '---';
         }
 
-        // 1. Cabeçalho, Categoria e Banhos Dinâmicos (Ouro, Prata, Ródio, Inox, etc.)
-        const temLado = getCel(1, 9);         // TEM LADO
-        const banhoOuroQtd = getCel(2, 6);    // QTD Banho Ouro
-        const banhoPrataQtd = getCel(2, 7);   // QTD Banho Prata
-        const banhoOutroQtd = getCel(2, 8);   // QTD Outros Banhos (Ródio / Inox / etc)
-        const banhoOutroNome = getCel(3, 8);  // Nome do Banho Especial (Ex: OUTRO / RÓDIO / INOX)
+        // Leitura cirúrgica da matriz real visualizada
+        // 1. Títulos e Informações Principais
+        const cliente = findValNear("Nome do Cliente", "down");
+        const lote = findValNear("Lote", "down");
+        const pesoUnit = findValNear("Peso Unit", "down") !== '---' ? findValNear("Peso Unit", "down") : findValNear("Peso Unt", "down");
+        const pesoTotal = findValNear("Peso Total", "down");
+        const fornecedor = findValNear("Fornecedor", "down");
+        const modelo = findValNear("Modelo", "down");
+        const codigoProd = findValNear("AX", "down") !== '---' ? findValNear("AX", "down") : findValNear("Codigo Produto", "down");
         
-        const categoria = getCel(4, 9);       // Categoria Dinâmica (Anel, Brinco, Colar, etc.)
-        const tamanho = getCel(4, 11);        // Tamanho
+        const categoria = findValNear("Categoria", "down") !== '---' ? findValNear("Categoria", "down") : findValNear("Categoria", "right");
+        const tamanho = findValNear("16cm", "right") !== '---' ? "16cm" : findValNear("Tamanho", "right");
+        const temLado = findValNear("TEM LADO", "right") !== '---' ? "TEM LADO" : findValNear("Lado", "right");
 
-        // 2. Informações Gerais do Modelo
-        const cliente = getCel(6, 4) !== '---' ? getCel(6, 4) : getCel(6, 3);
-        const lote = getCel(6, 6);
-        const pesoTotal = getCel(6, 7);
-        const pesoUnit = getCel(6, 8);
-        const fornecedor = getCel(6, 9);
+        // Banhos
+        const banhoOuroQtd = findValNear("OURO", "down");
+        const banhoPrataQtd = findValNear("PRATA", "down");
+        const banhoOutroQtd = findValNear("OUTRO", "down");
 
-        const modelo = getCel(9, 7);
-        const codigoProd = getCel(11, 3);
-        const qtdTotalPeças = getCel(11, 7);
-        const valorBruto = getCel(11, 9);
-
-        // 3. Tabela de Serviços
-        const listaServicos = [
-          { nome: "Inspeção", unt: getCel(14, 6), qtd: getCel(14, 7), total: getCel(14, 9) },
-          { nome: "Fotografia", unt: getCel(15, 6), qtd: getCel(15, 7), total: getCel(15, 9) },
-          { nome: "Cadastro Externo", unt: getCel(16, 6), qtd: getCel(16, 7), total: getCel(16, 9) },
-          { nome: "Etiqueta", unt: getCel(17, 6), qtd: getCel(17, 7), total: getCel(17, 9) },
-          { nome: "Encarte", unt: getCel(18, 6), qtd: getCel(18, 7), total: getCel(18, 9) },
-          { nome: "Cravação Buril", unt: getCel(19, 6), qtd: getCel(19, 7), total: getCel(19, 9) },
-          { nome: "Colagem", unt: getCel(20, 6), qtd: getCel(20, 7), total: getCel(20, 9) },
-          { nome: "Montagem", unt: getCel(21, 6), qtd: getCel(21, 7), total: getCel(21, 9) },
-          { nome: "Reposição", unt: getCel(22, 6), qtd: getCel(22, 7), total: getCel(22, 9) }
-        ];
-
-        // 4. Custos Adicionais e Insumos
-        const valorInicial = getCel(23, 9);
-        const banhoOuroVal = getCel(24, 8);
-        const banhoOuroTipo = getCel(24, 9);
-        const banhoPrataVal = getCel(25, 8);
-        const banhoPrataTipo = getCel(25, 9);
-        const vernizVal = getCel(26, 8);
-        const vernizTipo = getCel(26, 9);
-        const insumosVal = getCel(27, 8);
-        const corrente = getCel(28, 9);
-
-        document.getElementById('lbl-lote').innerText = 'LOTE ' + lote;
-
+        // Serviços (Varredura dinâmica na tabela)
+        const listaNomesServicos = ["Inspeção", "Fotografia", "Cadastro Externo", "Etiqueta", "Encarte", "Cravação Buril", "Colagem", "Montagem", "Reposição"];
         let servicosHTML = '';
-        listaServicos.forEach(s => {
+
+        listaNomesServicos.forEach(nome => {
+          let itemKw = cells.find(c => c.v.toLowerCase().includes(nome.toLowerCase()));
+          let unt = 'R$ 0,00', qtd = '0', total = 'R$ 0,00';
+
+          if (itemKw) {
+            let rowItems = cells.filter(c => c.r === itemKw.r && c.c > itemKw.c);
+            if (rowItems.length >= 1) unt = rowItems[0].f;
+            if (rowItems.length >= 2) qtd = rowItems[1].f;
+            if (rowItems.length >= 3) total = rowItems[2].f;
+          }
+
           servicosHTML += `
             <tr>
-              <td>${s.nome}</td>
-              <td style="text-align: center; color: var(--text-dim);">${s.unt !== '---' ? s.unt : 'R$ 0,00'}</td>
-              <td style="text-align: center;">${s.qtd !== '---' ? s.qtd : 0}</td>
-              <td class="val-total">${s.total !== '---' ? s.total : 'R$ 0,00'}</td>
+              <td>${nome}</td>
+              <td style="text-align: center; color: var(--text-dim);">${unt}</td>
+              <td style="text-align: center;">${qtd}</td>
+              <td class="val-total">${total}</td>
             </tr>
           `;
         });
 
-        // Exibição Dinâmica dos Banhos no Card
-        let banhosInfoHTML = `
+        // Custos Adicionais
+        const valorInicial = findValNear("Valor Inicial", "right");
+        const banhoOuroVal = findValNear("Custo Banho Ouro", "right");
+        const banhoOuroTipo = findValNear("OURO 3%", "right") !== '---' ? "OURO 3%" : "---";
+        const banhoPrataVal = findValNear("Custo Banho Prata", "right");
+        const banhoPrataTipo = findValNear("PRATA 70", "right") !== '---' ? "PRATA 70" : "---";
+        const vernizVal = findValNear("Verniz", "right");
+        const vernizTipo = findValNear("Cataforetico", "right") !== '---' ? "Cataforetico" : "---";
+        const insumosVal = findValNear("Insumos", "right");
+        const corrente = findValNear("Corrente", "right");
+        const valorBruto = findValNear("Valor Bruto", "down") !== '---' ? findValNear("Valor Bruto", "down") : findValNear("R$", "down");
+
+        document.getElementById('lbl-lote').innerText = 'LOTE ' + (lote !== '---' ? lote : '');
+
+        let banhosHTML = `
           <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${banhoOuroQtd}</span></div>
           <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${banhoPrataQtd}</span></div>
         `;
 
-        if (banhoOutroQtd !== '---' && banhoOutroQtd !== '0') {
-          banhosInfoHTML += `
-            <div class="info-item"><label>BANHO ESPECIAIS (${banhoOutroNome})</label><span style="color: var(--cyan-glow);">${banhoOutroQtd}</span></div>
-          `;
+        if (banhoOutroQtd !== '---') {
+          banhosHTML += `<div class="info-item"><label>OUTROS BANHOS</label><span style="color: var(--cyan-glow);">${banhoOutroQtd}</span></div>`;
         }
 
         const html = `
@@ -258,15 +283,14 @@
             <div class="info-item"><label>LOTE</label><span style="color: var(--cyan-glow);">${lote}</span></div>
             <div class="info-item"><label>FORNECEDOR</label><span>${fornecedor}</span></div>
             <div class="info-item"><label>CATEGORIA</label><span style="color: var(--cyan-glow); font-weight: bold;">${categoria}</span></div>
-            <div class="info-item"><label>MODELO / CÓDIGO</label><span style="color: var(--cyan-glow); font-size: 1.2rem;">${modelo}</span></div>
+            <div class="info-item"><label>MODELO</label><span style="color: var(--cyan-glow); font-size: 1.2rem;">${modelo}</span></div>
             <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${codigoProd}</span></div>
             <div class="info-item"><label>PESO UNITÁRIO</label><span>${pesoUnit} g</span></div>
             <div class="info-item"><label>PESO TOTAL</label><span>${pesoTotal}</span></div>
-            <div class="info-item"><label>TAMANHO PULSEIRA / TORNOZELEIRA</label><span>${tamanho}</span></div>
+            <div class="info-item"><label>TAMANHO</label><span>${tamanho}</span></div>
             <div class="info-item"><label>TEM LADO?</label><span style="color: var(--magenta-glow);">${temLado}</span></div>
-            ${banhosInfoHTML}
+            ${banhosHTML}
             <div class="info-item"><label>ADICIONAL CORRENTE</label><span>${corrente}</span></div>
-            <div class="info-item"><label>QTD TOTAL PEÇAS</label><span>${qtdTotalPeças} pçs</span></div>
           </div>
 
           <div class="section-header">SERVIÇOS & COMPOSIÇÃO</div>
@@ -287,26 +311,11 @@
           <div class="section-header">CUSTOS ADICIONAIS DE PRODUÇÃO</div>
           <table class="cyber-table">
             <tbody>
-              <tr>
-                <td>Valor Inicial</td>
-                <td colspan="2" class="val-total">${valorInicial}</td>
-              </tr>
-              <tr>
-                <td>Custo Banho Ouro <small style="color:var(--yellow-glow);">(${banhoOuroTipo})</small></td>
-                <td colspan="2" class="val-total">${banhoOuroVal}</td>
-              </tr>
-              <tr>
-                <td>Custo Banho Prata <small style="color:#cbd5e1;">(${banhoPrataTipo})</small></td>
-                <td colspan="2" class="val-total">${banhoPrataVal}</td>
-              </tr>
-              <tr>
-                <td>Verniz Cataforético <small style="color:var(--cyan-glow);">(${vernizTipo})</small></td>
-                <td colspan="2" class="val-total">${vernizVal}</td>
-              </tr>
-              <tr>
-                <td>Insumos</td>
-                <td colspan="2" class="val-total">${insumosVal}</td>
-              </tr>
+              <tr><td>Valor Inicial</td><td colspan="2" class="val-total">${valorInicial}</td></tr>
+              <tr><td>Custo Banho Ouro <small style="color:var(--yellow-glow);">(${banhoOuroTipo})</small></td><td colspan="2" class="val-total">${banhoOuroVal}</td></tr>
+              <tr><td>Custo Banho Prata <small style="color:#cbd5e1;">(${banhoPrataTipo})</small></td><td colspan="2" class="val-total">${banhoPrataVal}</td></tr>
+              <tr><td>Verniz Cataforético <small style="color:var(--cyan-glow);">(${vernizTipo})</small></td><td colspan="2" class="val-total">${vernizVal}</td></tr>
+              <tr><td>Insumos</td><td colspan="2" class="val-total">${insumosVal}</td></tr>
             </tbody>
           </table>
 
@@ -322,11 +331,11 @@
         document.getElementById('main-card').innerHTML = html;
 
       } catch (err) {
-        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR PLANILHA.</div>';
+        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO DE CONEXÃO COM A PLANILHA.</div>';
       }
     }
 
-    window.onload = carregarDados;
+    window.onload = carregarDadosUltraInteligente;
   </script>
 </body>
 </html>
