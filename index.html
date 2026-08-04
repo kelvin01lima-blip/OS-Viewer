@@ -36,7 +36,6 @@
       overflow-x: hidden;
     }
 
-    /* TOPO FUTURISTA HUD */
     header {
       width: 100%;
       max-width: 500px;
@@ -50,7 +49,6 @@
       align-items: center;
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
       clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
-      position: relative;
     }
 
     .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; }
@@ -85,7 +83,6 @@
       100% { opacity: 0.3; }
     }
 
-    /* PAINEL HOLOGRÁFICO QUE ENVELOPA A TABELA */
     .cyber-card {
       width: 100%;
       max-width: 500px;
@@ -110,26 +107,23 @@
       letter-spacing: 1px;
     }
 
-    /* MÁSCARA DE CORTE - ESCONDE O VAZIO BRANCO DA PLANILHA */
     .table-crop-container {
       width: 100%;
-      height: 650px;
+      height: 680px;
       position: relative;
       overflow: hidden;
       background: #ffffff;
     }
 
-    /* IFRAME AJUSTADO PARA FOCAR SÓ NA TABELA DA ESQUERDA */
     iframe {
       position: absolute;
-      top: -15px;
+      top: -10px;
       left: -5px;
-      width: 110%;
+      width: 105%;
       height: 720px;
       border: none;
     }
 
-    /* DECORAÇÃO FUTURISTA INFERIOR */
     .card-footer {
       background: #090e18;
       padding: 10px 15px;
@@ -183,8 +177,8 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Puxa a aba 'Cliente' com recorte focado na tabela das colunas A-E
-      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/pubhtml?gid=1682700545&single=true&widget=false&headers=false&chrome=false`;
+      // Usa a busca universal pelo nome exato da aba 'Cliente' sem depender de ID de aba antigo
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:html&sheet=Cliente`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
