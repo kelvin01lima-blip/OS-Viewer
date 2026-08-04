@@ -6,17 +6,14 @@
   <title>S.O.S - Visualizador Cyber OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #080b10;
       --panel-bg: rgba(13, 20, 33, 0.95);
       --cyan-glow: #00f0ff;
       --magenta-glow: #ff0055;
-      --green-glow: #00ff66;
-      --yellow-glow: #eab308;
-      --border-color: rgba(0, 240, 255, 0.3);
-      --text-dim: #94a3b8;
+      --border-color: rgba(0, 240, 255, 0.4);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -24,142 +21,110 @@
     body {
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
-        linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
-      background-size: 100% 100%, 25px 25px, 25px 25px;
-      color: #f8fafc;
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.15) 0%, transparent 60%),
+        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+      background-size: 100% 100%, 20px 20px, 20px 20px;
+      color: #fff;
       font-family: 'Rajdhani', sans-serif;
-      min-height: 100vh;
-      padding: 15px;
+      height: 100vh;
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
+      flex-direction: column;
+      padding: 12px;
+      overflow: hidden;
     }
-
-    .container { width: 100%; max-width: 680px; margin: 0 auto; }
 
     header {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
-      padding: 15px 20px;
-      border-radius: 12px;
-      margin-bottom: 15px;
+      padding: 12px 18px;
+      border-radius: 10px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
     }
 
-    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
+    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; }
     .brand-title span { color: var(--cyan-glow); }
 
     .lote-badge {
       background: rgba(0, 240, 255, 0.15);
       border: 1px solid var(--cyan-glow);
       color: var(--cyan-glow);
-      padding: 4px 12px;
+      padding: 4px 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.9rem;
+      font-size: 0.8rem;
       font-weight: bold;
       border-radius: 4px;
     }
 
-    .card-os {
+    .cyber-frame-wrapper {
+      flex: 1;
+      position: relative;
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 20px;
-      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
-    }
-
-    .info-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 12px;
-      margin-bottom: 20px;
-      background: rgba(4, 8, 15, 0.7);
-      padding: 15px;
-      border-radius: 8px;
-      border: 1px solid rgba(0, 240, 255, 0.15);
-    }
-
-    .info-item label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; }
-    .info-item span { font-size: 1.05rem; font-weight: 700; color: #fff; }
-    .full-width { grid-column: 1 / -1; }
-
-    .section-header {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.85rem;
-      color: var(--cyan-glow);
-      margin: 20px 0 10px 0;
-      text-transform: uppercase;
-      letter-spacing: 1px;
+      overflow: hidden;
+      box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.8), 0 0 15px rgba(0, 240, 255, 0.1);
       display: flex;
-      align-items: center;
-      gap: 8px;
+      flex-direction: column;
     }
-    .section-header::before { content: '//'; color: var(--magenta-glow); }
 
-    table.cyber-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
-    table.cyber-table th {
+    .frame-header {
       background: rgba(0, 240, 255, 0.08);
-      color: var(--cyan-glow);
+      padding: 8px 15px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.75rem;
-      padding: 8px;
-      text-align: left;
+      color: var(--cyan-glow);
       border-bottom: 1px solid var(--border-color);
-    }
-
-    table.cyber-table td { padding: 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.9rem; }
-    .val-total { font-weight: bold; color: var(--green-glow); text-align: right; }
-
-    .total-box {
-      background: rgba(0, 240, 255, 0.05);
-      border: 1px solid var(--cyan-glow);
-      padding: 15px;
-      border-radius: 8px;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      margin-top: 15px;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+      letter-spacing: 1px;
     }
 
-    .total-box .price {
+    .iframe-container {
+      width: 100%;
+      height: 100%;
+      flex: 1;
+      position: relative;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+      filter: contrast(105%) brightness(98%);
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       font-family: 'Orbitron', sans-serif;
-      font-size: 1.5rem;
-      font-weight: bold;
-      color: var(--green-glow);
-      text-shadow: 0 0 10px var(--green-glow);
-    }
-
-    .grade-box {
-      background: rgba(0, 240, 255, 0.08);
-      border: 1px solid var(--border-color);
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-top: 4px;
-      font-family: monospace;
       color: var(--cyan-glow);
-      font-size: 0.95rem;
+      letter-spacing: 2px;
+      text-align: center;
     }
-
-    .loading { text-align: center; padding: 40px; font-family: 'Orbitron', sans-serif; color: var(--cyan-glow); letter-spacing: 2px; }
   </style>
 </head>
 <body>
 
-  <div class="container">
-    <header>
-      <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
-      <div class="lote-badge" id="lbl-lote">CARREGANDO...</div>
-    </header>
+  <header>
+    <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
+    <div class="lote-badge">DISPLAY OS</div>
+  </header>
 
-    <div class="card-os" id="main-card">
-      <div class="loading">CARREGANDO OS...</div>
+  <div class="cyber-frame-wrapper">
+    <div class="frame-header">
+      <span>// MATRIZ DE ACOMPANHAMENTO DE MODELO</span>
+      <span style="color: var(--magenta-glow);">● LIVE VIEW</span>
+    </div>
+    <div class="iframe-container" id="display-area">
+      <div class="loading">CONECTANDO MATRIZ VISUAL...</div>
     </div>
   </div>
 
@@ -167,193 +132,13 @@
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '';
 
-    async function carregarOS() {
-      if (!planId) {
-        document.getElementById('main-card').innerHTML = '<div class="loading">NENHUMA PLANILHA SELECIONADA</div>';
-        return;
-      }
-
-      try {
-        const url = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:json`;
-        const res = await fetch(url);
-        const text = await res.text();
-        
-        const jsonString = text.substring(47, text.length - 2);
-        const json = JSON.parse(jsonString);
-        const rows = json.table.rows;
-
-        // Função para capturar células da matriz com fallback
-        function getCel(r, c) {
-          try {
-            if (rows[r] && rows[r].c && rows[r].c[c] && rows[r].c[c].v !== null && rows[r].c[c].v !== "") {
-              return rows[r].c[c].f ? rows[r].c[c].f : String(rows[r].c[c].v);
-            }
-          } catch(e) {}
-          return '';
-        }
-
-        // --- DADOS DO CABEÇALHO & MODELO ---
-        const temLado = getCel(1, 9);
-        const banhoOuroQtd = getCel(2, 4) || getCel(2, 5) || '0';
-        const banhoPrataQtd = getCel(2, 5) || getCel(2, 6) || '0';
-        const banhoOutroQtd = getCel(2, 6) || getCel(2, 7) || '0';
-        const banhoOutroNome = getCel(3, 6) || getCel(3, 7) || '';
-        const categoria = getCel(4, 7) || getCel(4, 8) || getCel(4, 9) || '---';
-        const tamanho = getCel(4, 11) || getCel(4, 10) || '';
-
-        const cliente = getCel(6, 3) || getCel(6, 4) || '---';
-        const lote = getCel(6, 5) || getCel(6, 6) || '---';
-        const pesoTotal = getCel(6, 7) || '---';
-        const pesoUnit = getCel(6, 8) || '---';
-        const fornecedor = getCel(6, 9) || '---';
-
-        const modelo = getCel(9, 7) || getCel(9, 6) || '---';
-        const codigoProd = getCel(11, 3) || getCel(11, 2) || '---';
-        const qtdTotalPcs = getCel(11, 7) || getCel(11, 6) || '0';
-        const valorBruto = getCel(11, 9) || getCel(11, 8) || 'R$ 0,00';
-
-        document.getElementById('lbl-lote').innerText = 'LOTE ' + (lote !== '---' ? lote : '');
-
-        // --- GRADE DE ANÉIS (SE HOUVER) ---
-        let gradeAneisHTML = '';
-        const gradeOuro = getCel(24, 3) || getCel(24, 4);
-        const gradePrata = getCel(26, 3) || getCel(26, 4);
-
-        if (gradeOuro) gradeAneisHTML += `<div class="grade-box">${gradeOuro}</div>`;
-        if (gradePrata) gradeAneisHTML += `<div class="grade-box">${gradePrata}</div>`;
-
-        // --- SERVIÇOS (SE QTD > 0 EXIBE, SE QTD == 0 ESCONDE) ---
-        const servicosIndices = [
-          { nome: "Inspeção", r: 14 },
-          { nome: "Fotografia", r: 15 },
-          { nome: "Cadastro Externo", r: 16 },
-          { nome: "Etiqueta", r: 17 },
-          { nome: "Encarte", r: 18 },
-          { nome: "Cravação Buril", r: 19 },
-          { nome: "Colagem", r: 20 },
-          { nome: "Montagem", r: 21 },
-          { nome: "Reposição", r: 22 }
-        ];
-
-        let servicosHTML = '';
-        servicosIndices.forEach(s => {
-          let unt = getCel(s.r, 6) || 'R$ 0,00';
-          let qtd = getCel(s.r, 7) || '0';
-          let total = getCel(s.r, 9) || getCel(s.r, 8) || 'R$ 0,00';
-
-          let qtdNum = parseInt(qtd);
-          if (!isNaN(qtdNum) && qtdNum > 0) {
-            servicosHTML += `
-              <tr>
-                <td>${s.nome}</td>
-                <td style="text-align: center; color: var(--text-dim);">${unt}</td>
-                <td style="text-align: center; font-weight: bold; color: var(--cyan-glow);">${qtd}</td>
-                <td class="val-total">${total}</td>
-              </tr>
-            `;
-          }
-        });
-
-        // --- CUSTOS ADICIONAIS & VERNIZ ---
-        const valorInicial = getCel(23, 9) || getCel(23, 8);
-        const banhoOuroVal = getCel(24, 8) || getCel(24, 7);
-        const banhoOuroTipo = getCel(24, 9) || getCel(24, 10);
-        const banhoPrataVal = getCel(25, 8) || getCel(25, 7);
-        const banhoPrataTipo = getCel(25, 9) || getCel(25, 10);
-        
-        const vernizVal = getCel(26, 8) || getCel(26, 7);
-        const vernizTipo = getCel(26, 9) || getCel(26, 10);
-
-        const insumosVal = getCel(27, 8) || getCel(27, 7);
-        const correnteVal = getCel(28, 9) || getCel(28, 8);
-
-        let custosHTML = '';
-        if (valorInicial) custosHTML += `<tr><td>Valor Inicial</td><td colspan="2" class="val-total">${valorInicial}</td></tr>`;
-        if (banhoOuroVal) custosHTML += `<tr><td>Custo Banho Ouro <small style="color:var(--yellow-glow);">(${banhoOuroTipo})</small></td><td colspan="2" class="val-total">${banhoOuroVal}</td></tr>`;
-        if (banhoPrataVal) custosHTML += `<tr><td>Custo Banho Prata <small style="color:#cbd5e1;">(${banhoPrataTipo})</small></td><td colspan="2" class="val-total">${banhoPrataVal}</td></tr>`;
-        
-        // Verniz com R$ ou apenas o Nome do tipo
-        if (vernizVal && vernizVal !== 'R$ 0,00') {
-          custosHTML += `<tr><td>Verniz <small style="color:var(--cyan-glow);">(${vernizTipo})</small></td><td colspan="2" class="val-total">${vernizVal}</td></tr>`;
-        } else if (vernizTipo) {
-          custosHTML += `<tr><td>Verniz</td><td colspan="2" class="val-total" style="color:var(--cyan-glow);">${vernizTipo}</td></tr>`;
-        }
-
-        if (insumosVal) custosHTML += `<tr><td>Insumos</td><td colspan="2" class="val-total">${insumosVal}</td></tr>`;
-
-        // --- MONTAGEM DA INTERFACE CYBER ---
-        let html = `
-          <div class="section-header">INFORMAÇÕES DO MODELO</div>
-          <div class="info-grid">
-            <div class="info-item"><label>CLIENTE</label><span>${cliente}</span></div>
-            <div class="info-item"><label>LOTE</label><span style="color: var(--cyan-glow);">${lote}</span></div>
-            <div class="info-item"><label>FORNECEDOR</label><span>${fornecedor}</span></div>
-            <div class="info-item"><label>CATEGORIA</label><span style="color: var(--cyan-glow); font-weight: bold;">${categoria}</span></div>
-            <div class="info-item"><label>MODELO</label><span style="color: var(--cyan-glow); font-size: 1.2rem;">${modelo}</span></div>
-            <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${codigoProd}</span></div>
-            <div class="info-item"><label>PESO UNITÁRIO</label><span>${pesoUnit} g</span></div>
-            <div class="info-item"><label>QTD TOTAL PEÇAS</label><span style="color:var(--green-glow);">${qtdTotalPcs} pçs</span></div>
-            
-            <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${banhoOuroQtd}</span></div>
-            <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${banhoPrataQtd}</span></div>
-            ${banhoOutroQtd !== '0' && banhoOutroQtd !== '' ? `<div class="info-item"><label>OUTRO BANHO (${banhoOutroNome})</label><span style="color: var(--magenta-glow);">${banhoOutroQtd}</span></div>` : ''}
-
-            ${tamanho ? `<div class="info-item"><label>TAMANHO</label><span>${tamanho}</span></div>` : ''}
-            ${temLado ? `<div class="info-item"><label>TEM LADO?</label><span style="color: var(--magenta-glow);">${temLado}</span></div>` : ''}
-            ${correnteVal ? `<div class="info-item full-width"><label>ADICIONAL CORRENTE</label><span style="color: var(--cyan-glow);">${correnteVal}</span></div>` : ''}
-            
-            ${gradeAneisHTML ? `<div class="info-item full-width"><label>GRADE DE TAMANHOS (ANÉIS)</label>${gradeAneisHTML}</div>` : ''}
-          </div>
-        `;
-
-        if (servicosHTML) {
-          html += `
-            <div class="section-header">SERVIÇOS EM ANDAMENTO</div>
-            <table class="cyber-table">
-              <thead>
-                <tr>
-                  <th>SERVIÇO</th>
-                  <th style="text-align: center;">VALOR UNT</th>
-                  <th style="text-align: center;">QTD</th>
-                  <th style="text-align: right;">VALOR TOTAL</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${servicosHTML}
-              </tbody>
-            </table>
-          `;
-        }
-
-        if (custosHTML) {
-          html += `
-            <div class="section-header">CUSTOS ADICIONAIS DE PRODUÇÃO</div>
-            <table class="cyber-table">
-              <tbody>
-                ${custosHTML}
-              </tbody>
-            </table>
-          `;
-        }
-
-        html += `
-          <div class="total-box">
-            <div>
-              <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">VALOR BRUTO ESTIMADO</span>
-              <div style="font-size: 0.75rem; color: var(--cyan-glow);">ORÇAMENTO POR MODELO</div>
-            </div>
-            <div class="price">${valorBruto}</div>
-          </div>
-        `;
-
-        document.getElementById('main-card').innerHTML = html;
-
-      } catch (err) {
-        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR PLANILHA.</div>';
-      }
+    if (planId) {
+      // Carrega o documento no modo limpo de renderização visual
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?widget=false&chrome=false`;
+      document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
+    } else {
+      document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
     }
-
-    window.onload = carregarOS;
   </script>
 </body>
 </html>
