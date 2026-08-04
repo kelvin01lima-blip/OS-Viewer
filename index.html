@@ -3,14 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S.O.S - Área do Cliente CYBER</title>
+  <title>S.O.S - Área do Cliente</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg-dark: #05080e;
-      --panel-bg: rgba(10, 16, 26, 0.95);
+      --panel-bg: rgba(10, 16, 26, 0.98);
       --cyan-glow: #00f0ff;
       --magenta-glow: #ff0055;
       --green-glow: #00ff66;
@@ -33,10 +33,8 @@
       flex-direction: column;
       align-items: center;
       padding: 12px;
-      overflow-x: hidden;
     }
 
-    /* TOPO FUTURISTA HUD */
     header {
       width: 100%;
       max-width: 480px;
@@ -75,25 +73,18 @@
       background-color: var(--green-glow);
       border-radius: 50%;
       box-shadow: 0 0 8px var(--green-glow);
-      animation: pulse 1.5s infinite;
     }
 
-    @keyframes pulse {
-      0% { opacity: 0.3; }
-      50% { opacity: 1; }
-      100% { opacity: 0.3; }
-    }
-
-    /* MOLDURA FUTURISTA */
     .cyber-card {
       width: 100%;
       max-width: 480px;
-      background: rgba(13, 20, 33, 0.95);
+      background: rgba(13, 20, 33, 0.98);
       border: 2px solid var(--cyan-glow);
       border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0, 240, 255, 0.35), inset 0 0 15px rgba(0, 240, 255, 0.1);
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
       overflow: hidden;
-      position: relative;
+      display: flex;
+      flex-direction: column;
     }
 
     .card-header {
@@ -105,48 +96,35 @@
       border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
-      align-items: center;
       letter-spacing: 1px;
     }
 
-    /* CONTAINER ENQUADRADO PARA O RETRATO DA PLANILHA */
-    .table-crop-container {
+    .table-container {
       width: 100%;
-      height: 680px;
-      position: relative;
-      overflow: hidden;
       background: #ffffff;
+      padding: 10px;
+      overflow-x: auto;
     }
 
-    iframe {
-      position: absolute;
-      top: 0;
-      left: 0;
+    /* ESTILIZAÇÃO DA TABELA EXTRAÍDA */
+    .table-container table {
       width: 100%;
-      height: 720px;
-      border: none;
+      border-collapse: collapse;
+      color: #000;
+      font-family: Arial, sans-serif;
+      font-size: 13px;
     }
 
-    .card-footer {
-      background: #090e18;
-      padding: 10px 15px;
-      border-top: 1px solid var(--border-color);
-      font-family: 'Orbitron', sans-serif;
-      font-size: 0.7rem;
-      color: rgba(255, 255, 255, 0.6);
-      display: flex;
-      justify-content: space-between;
+    .table-container td, .table-container th {
+      padding: 4px 6px;
     }
 
     .loading {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      padding: 40px;
       font-family: 'Orbitron', sans-serif;
       color: var(--cyan-glow);
-      letter-spacing: 2px;
       text-align: center;
+      background: var(--bg-dark);
     }
   </style>
 </head>
@@ -162,16 +140,11 @@
   <div class="cyber-card">
     <div class="card-header">
       <span>// RESUMO DO MODELO</span>
-      <span style="color: var(--magenta-glow);">LIVE</span>
+      <span style="color: var(--magenta-glow);">AO VIVO</span>
     </div>
 
-    <div class="table-crop-container" id="display-area">
-      <div class="loading">CARREGANDO DADOS...</div>
-    </div>
-
-    <div class="card-footer">
-      <span>SISTEMA CYBER OS</span>
-      <span style="color: var(--cyan-glow);">S.O.S DIGITAL</span>
+    <div class="table-container" id="display-area">
+      <div class="loading">CARREGANDO DADOS DA ABA CLIENTE...</div>
     </div>
   </div>
 
@@ -180,9 +153,24 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Força a renderização em preview da aba 'Cliente' sem barras de interface
-      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/preview?gid=1682700545&rm=minimal`;
-      document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
+      // Puxa APENAS a tabela de dados limpa da aba 'Cliente'
+      fetch(`https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:html&sheet=Cliente`)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          const table = doc.querySelector('table');
+          
+          if (table) {
+            document.getElementById('display-area').innerHTML = '';
+            document.getElementById('display-area').appendChild(table);
+          } else {
+            document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">ABA 'Cliente' NÃO ENCONTRADA</div>`;
+          }
+        })
+        .catch(() => {
+          document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR PLANILHA</div>`;
+        });
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
     }
