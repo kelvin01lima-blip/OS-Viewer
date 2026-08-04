@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S.O.S - Visualizador de Orçamento & OS</title>
+  <title>S.O.S - Visualizador Cyber OS</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
@@ -14,6 +14,7 @@
       --cyan-glow: #00f0ff;
       --magenta-glow: #ff0055;
       --green-glow: #00ff66;
+      --yellow-glow: #eab308;
       --border-color: rgba(0, 240, 255, 0.3);
       --text-dim: #94a3b8;
     }
@@ -24,103 +25,276 @@
       background-color: var(--bg-dark);
       background-image: 
         radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.12) 0%, transparent 50%),
-        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
-      background-size: 100% 100%, 20px 20px, 20px 20px;
+        linear-gradient(rgba(0, 240, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.02) 1px, transparent 1px);
+      background-size: 100% 100%, 25px 25px, 25px 25px;
       color: #f8fafc;
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
-      padding: 10px;
+      padding: 15px;
       display: flex;
-      flex-direction: column;
-      align-items: center;
+      justify-content: center;
+      align-items: flex-start;
     }
 
-    .container {
-      width: 100%;
-      max-width: 800px;
-      display: flex;
-      flex-direction: column;
-      height: calc(100vh - 20px);
-    }
+    .container { width: 100%; max-width: 650px; margin: 0 auto; }
 
     header {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
-      padding: 12px 18px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      padding: 15px 20px;
+      border-radius: 12px;
+      margin-bottom: 15px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.15);
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
     }
 
-    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; color: #fff; }
+    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
     .brand-title span { color: var(--cyan-glow); }
 
     .lote-badge {
       background: rgba(0, 240, 255, 0.15);
       border: 1px solid var(--cyan-glow);
       color: var(--cyan-glow);
-      padding: 4px 10px;
+      padding: 4px 12px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.9rem;
       font-weight: bold;
       border-radius: 4px;
     }
 
-    .frame-wrapper {
-      flex: 1;
-      width: 100%;
-      background: #ffffff;
-      border: 2px solid var(--cyan-glow);
+    .card-os {
+      background: var(--panel-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 20px;
+      background: rgba(4, 8, 15, 0.7);
+      padding: 15px;
       border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-      position: relative;
+      border: 1px solid rgba(0, 240, 255, 0.15);
     }
 
-    iframe {
-      width: 100%;
-      height: 100%;
-      border: none;
-    }
+    .info-item label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .info-item span { font-size: 1.05rem; font-weight: 700; color: #fff; }
 
-    .status-bar {
-      margin-top: 8px;
-      text-align: center;
+    .section-header {
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.7rem;
+      font-size: 0.85rem;
       color: var(--cyan-glow);
+      margin: 20px 0 10px 0;
+      text-transform: uppercase;
       letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
+    .section-header::before { content: '//'; color: var(--magenta-glow); }
+
+    table.cyber-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
+    table.cyber-table th {
+      background: rgba(0, 240, 255, 0.08);
+      color: var(--cyan-glow);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.75rem;
+      padding: 8px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    table.cyber-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.95rem; }
+    .val-total { font-weight: bold; color: var(--green-glow); text-align: right; }
+
+    .total-box {
+      background: rgba(0, 240, 255, 0.05);
+      border: 1px solid var(--cyan-glow);
+      padding: 15px;
+      border-radius: 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 15px;
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.1);
+    }
+
+    .total-box .price {
+      font-family: 'Orbitron', sans-serif;
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: var(--green-glow);
+      text-shadow: 0 0 10px var(--green-glow);
+    }
+
+    .loading { text-align: center; padding: 40px; font-family: 'Orbitron', sans-serif; color: var(--cyan-glow); letter-spacing: 2px; }
   </style>
 </head>
 <body>
 
   <div class="container">
     <header>
-      <div class="brand-title">S.O.S <span>SEMIJOIAS</span> // OS</div>
-      <div class="lote-badge">SISTEMA ATIVO</div>
+      <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
+      <div class="lote-badge" id="lbl-lote">CARREGANDO...</div>
     </header>
 
-    <div class="frame-wrapper">
-      <iframe id="sheet-frame" src="about:blank"></iframe>
+    <div class="card-os" id="main-card">
+      <div class="loading">SINCRONIZANDO DADOS CYBER...</div>
     </div>
-
-    <div class="status-bar">// DADOS SINCRONIZADOS EM TEMPO REAL COM O GOOGLE DRIVE</div>
   </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '';
 
-    if (planId) {
-      document.getElementById('sheet-frame').src = `https://docs.google.com/spreadsheets/d/${planId}/htmlview`;
-    } else {
-      document.getElementById('sheet-frame').srcdoc = `<h3 style="font-family:sans-serif; text-align:center; margin-top:50px; color:#333;">Cole o link de uma planilha no gerador de QR Code para visualizar os dados aqui.</h3>`;
+    async function carregarDados() {
+      if (!planId) {
+        document.getElementById('main-card').innerHTML = '<div class="loading">NENHUMA PLANILHA SELECIONADA</div>';
+        return;
+      }
+
+      try {
+        // Busca a versão limpa da planilha diretamente
+        const url = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:json`;
+        const res = await fetch(url);
+        const text = await res.text();
+        
+        // Remove a envoltória de texto da API do Google
+        const jsonString = text.substring(47, text.length - 2);
+        const json = JSON.parse(jsonString);
+        const rows = json.table.rows;
+
+        // Função auxiliar para pegar valor limpo da célula
+        function getVal(r, c) {
+          try {
+            return rows[r].c[c].v !== null ? rows[r].c[c].v : '---';
+          } catch(e) { return '---'; }
+        }
+
+        function getFmt(r, c) {
+          try {
+            return rows[r].c[c].f ? rows[r].c[c].f : getVal(r, c);
+          } catch(e) { return '---'; }
+        }
+
+        // Mapeamento dos dados extraídos diretamente das células
+        const cliente = getVal(5, 1);     // B6
+        const lote = getVal(5, 2);        // C6
+        const pesoUnit = getVal(5, 3);    // D6
+        const modelo = getVal(5, 4);      // E6
+        const codigoProd = getVal(5, 5);  // F6
+
+        const banhoOuroQtd = getVal(3, 8);  // I4
+        const banhoPrataQtd = getVal(3, 9); // J4
+        const pesoTotal = getVal(5, 9);     // J6
+        const qtdTotal = getVal(6, 9);      // J7
+        const temLado = getVal(1, 9);       // J2
+
+        const categoria = getVal(4, 10);    // K5
+        const fornecedor = getVal(6, 10);   // K7
+        const corrente = getVal(27, 10);    // K28
+        const tamanho = getVal(4, 12);      // M5
+        const valorBruto = getFmt(7, 12);   // M8
+
+        const banhoOuroVal = getFmt(20, 11);  // L21
+        const banhoPrataVal = getFmt(22, 11); // L23
+        const vernizVal = getFmt(24, 11);     // L25
+        const insumosVal = getFmt(26, 11);    // L27
+
+        // Lista de serviços dinamica
+        const servicos = [
+          { nome: "Inspeção", qtd: getVal(10, 9), total: getFmt(10, 12) },
+          { nome: "Fotografia", qtd: getVal(11, 9), total: getFmt(11, 12) },
+          { nome: "Cadastro Externo", qtd: getVal(12, 9), total: getFmt(12, 12) },
+          { nome: "Etiqueta", qtd: getVal(13, 9), total: getFmt(13, 12) },
+          { nome: "Encarte", qtd: getVal(14, 9), total: getFmt(14, 12) },
+          { nome: "Cravação Buril", qtd: getVal(15, 9), total: getFmt(15, 12) },
+          { nome: "Colagem", qtd: getVal(16, 9), total: getFmt(16, 12) },
+          { nome: "Montagem", qtd: getVal(17, 9), total: getFmt(17, 12) },
+          { nome: "Reposição", qtd: getVal(18, 9), total: getFmt(18, 12) }
+        ];
+
+        document.getElementById('lbl-lote').innerText = 'LOTE ' + (lote || '---');
+
+        let servicosHTML = '';
+        servicos.forEach(s => {
+          servicosHTML += `
+            <tr>
+              <td>${s.nome}</td>
+              <td style="text-align: center;">${s.qtd || 0}</td>
+              <td class="val-total">${s.total || 'R$ 0,00'}</td>
+            </tr>
+          `;
+        });
+
+        const html = `
+          <div class="section-header">INFORMAÇÕES DO MODELO</div>
+          <div class="info-grid">
+            <div class="info-item"><label>CLIENTE</label><span>${cliente}</span></div>
+            <div class="info-item"><label>LOTE</label><span style="color: var(--cyan-glow);">${lote}</span></div>
+            <div class="info-item"><label>FORNECEDOR</label><span>${fornecedor}</span></div>
+            <div class="info-item"><label>CATEGORIA</label><span>${categoria}</span></div>
+            <div class="info-item"><label>MODELO</label><span>${modelo}</span></div>
+            <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${codigoProd}</span></div>
+            <div class="info-item"><label>PESO UNITÁRIO</label><span>${pesoUnit} g</span></div>
+            <div class="info-item"><label>PESO TOTAL</label><span>${pesoTotal}</span></div>
+            <div class="info-item"><label>TAMANHO</label><span>${tamanho}</span></div>
+            <div class="info-item"><label>TEM LADO?</label><span>${temLado}</span></div>
+            <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${banhoOuroQtd}</span></div>
+            <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${banhoPrataQtd}</span></div>
+            <div class="info-item"><label>ADICIONAL CORRENTE</label><span>${corrente}</span></div>
+            <div class="info-item"><label>QTD TOTAL PEÇAS</label><span>${qtdTotal} pçs</span></div>
+          </div>
+
+          <div class="section-header">SERVIÇOS & COMPOSIÇÃO</div>
+          <table class="cyber-table">
+            <thead>
+              <tr>
+                <th>SERVIÇO</th>
+                <th style="text-align: center;">QTD</th>
+                <th style="text-align: right;">VALOR TOTAL</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${servicosHTML}
+            </tbody>
+          </table>
+
+          <div class="section-header">CUSTOS ADICIONAIS DE PRODUÇÃO</div>
+          <table class="cyber-table">
+            <tbody>
+              <tr><td>Custo Banho Ouro</td><td class="val-total">${banhoOuroVal}</td></tr>
+              <tr><td>Custo Banho Prata</td><td class="val-total">${banhoPrataVal}</td></tr>
+              <tr><td>Verniz Cataforético</td><td class="val-total">${vernizVal}</td></tr>
+              <tr><td>Insumos</td><td class="val-total">${insumosVal}</td></tr>
+            </tbody>
+          </table>
+
+          <div class="total-box">
+            <div>
+              <span style="font-size: 0.8rem; color: var(--text-dim); text-transform: uppercase;">VALOR BRUTO ESTIMADO</span>
+              <div style="font-size: 0.75rem; color: var(--cyan-glow);">ORÇAMENTO POR MODELO</div>
+            </div>
+            <div class="price">${valorBruto}</div>
+          </div>
+        `;
+
+        document.getElementById('main-card').innerHTML = html;
+
+      } catch (err) {
+        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR DADOS. VERIFIQUE SE A PLANILHA ESTÁ PÚBLICA NO DRIVE.</div>';
+      }
     }
+
+    window.onload = carregarDados;
   </script>
 </body>
 </html>
