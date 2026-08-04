@@ -73,12 +73,20 @@
       background-color: var(--green-glow);
       border-radius: 50%;
       box-shadow: 0 0 8px var(--green-glow);
+      animation: pulse 1.5s infinite;
     }
 
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+
+    /* MOLDURA FUTURISTA */
     .cyber-card {
       width: 100%;
       max-width: 480px;
-      background: rgba(13, 20, 33, 0.98);
+      background: #ffffff;
       border: 2px solid var(--cyan-glow);
       border-radius: 12px;
       box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
@@ -99,32 +107,32 @@
       letter-spacing: 1px;
     }
 
-    .table-container {
+    .iframe-wrapper {
       width: 100%;
+      height: 680px;
+      position: relative;
       background: #ffffff;
-      padding: 10px;
-      overflow-x: auto;
+      overflow: hidden;
     }
 
-    /* ESTILIZAÇÃO DA TABELA EXTRAÍDA */
-    .table-container table {
+    iframe {
       width: 100%;
-      border-collapse: collapse;
-      color: #000;
-      font-family: Arial, sans-serif;
-      font-size: 13px;
-    }
-
-    .table-container td, .table-container th {
-      padding: 4px 6px;
+      height: 100%;
+      border: none;
     }
 
     .loading {
-      padding: 40px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       font-family: 'Orbitron', sans-serif;
       color: var(--cyan-glow);
       text-align: center;
-      background: var(--bg-dark);
+      background: #05080e;
+      padding: 20px;
+      border-radius: 8px;
+      border: 1px solid var(--cyan-glow);
     }
   </style>
 </head>
@@ -143,8 +151,8 @@
       <span style="color: var(--magenta-glow);">AO VIVO</span>
     </div>
 
-    <div class="table-container" id="display-area">
-      <div class="loading">CARREGANDO DADOS DA ABA CLIENTE...</div>
+    <div class="iframe-wrapper" id="display-area">
+      <div class="loading">CARREGANDO DADOS...</div>
     </div>
   </div>
 
@@ -153,24 +161,9 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Puxa APENAS a tabela de dados limpa da aba 'Cliente'
-      fetch(`https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:html&sheet=Cliente`)
-        .then(res => res.text())
-        .then(html => {
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(html, 'text/html');
-          const table = doc.querySelector('table');
-          
-          if (table) {
-            document.getElementById('display-area').innerHTML = '';
-            document.getElementById('display-area').appendChild(table);
-          } else {
-            document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">ABA 'Cliente' NÃO ENCONTRADA</div>`;
-          }
-        })
-        .catch(() => {
-          document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR PLANILHA</div>`;
-        });
+      // Pega dinamicamente a aba chamada 'Cliente' para QUALQUER planilha que passar na URL (?id=...)
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?sheet=Cliente&widget=false&headers=false&chrome=false`;
+      document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
     }
