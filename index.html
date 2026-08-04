@@ -147,7 +147,7 @@
     </header>
 
     <div class="card-os" id="main-card">
-      <div class="loading">SINCRONIZANDO DADOS CYBER...</div>
+      <div class="loading">ANALISANDO ESTRUTURA DA PLANILHA...</div>
     </div>
   </div>
 
@@ -155,85 +155,98 @@
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '';
 
-    async function carregarDados() {
+    async function carregarDadosInteligentes() {
       if (!planId) {
         document.getElementById('main-card').innerHTML = '<div class="loading">NENHUMA PLANILHA SELECIONADA</div>';
         return;
       }
 
       try {
-        // Busca a versão limpa da planilha diretamente
         const url = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:json`;
         const res = await fetch(url);
         const text = await res.text();
         
-        // Remove a envoltória de texto da API do Google
         const jsonString = text.substring(47, text.length - 2);
         const json = JSON.parse(jsonString);
         const rows = json.table.rows;
 
-        // Função auxiliar para pegar valor limpo da célula
-        function getVal(r, c) {
-          try {
-            return rows[r].c[c].v !== null ? rows[r].c[c].v : '---';
-          } catch(e) { return '---'; }
+        // Mapeia todas as células da planilha em uma busca textual
+        let mapVal = {};
+        
+        for (let r = 0; r < rows.length; r++) {
+          if (!rows[r] || !rows[r].c) continue;
+          for (let c = 0; c < rows[r].c.length; c++) {
+            let cell = rows[r].c[c];
+            if (cell && cell.v !== null) {
+              let valStr = String(cell.v).trim();
+              let valFmt = cell.f ? cell.f : valStr;
+
+              // Guarda a posição do texto encontrado
+              mapVal[valStr.toLowerCase()] = { r: r, c: c, val: valStr, fmt: valFmt };
+            }
+          }
         }
 
-        function getFmt(r, c) {
-          try {
-            return rows[r].c[c].f ? rows[r].c[c].f : getVal(r, c);
-          } catch(e) { return '---'; }
+        // Função para achar o valor que está LOGO ABAIXO de um rótulo
+        function getAbaixo(rotulo) {
+          let found = mapVal[rotulo.toLowerCase()];
+          if (found && rows[found.r + 1] && rows[found.r + 1].c[found.c]) {
+            let cell = rows[found.r + 1].c[found.c];
+            if (cell && cell.v !== null) return cell.f ? cell.f : String(cell.v);
+          }
+          return '---';
         }
 
-        // Mapeamento dos dados extraídos diretamente das células
-        const cliente = getVal(5, 1);     // B6
-        const lote = getVal(5, 2);        // C6
-        const pesoUnit = getVal(5, 3);    // D6
-        const modelo = getVal(5, 4);      // E6
-        const codigoProd = getVal(5, 5);  // F6
+        // Função para achar o valor que está AO LADO DIREITO de um rótulo
+        function getAoLado(rotulo, offset = 1) {
+          let found = mapVal[rotulo.toLowerCase()];
+          if (found && rows[found.r] && rows[found.r].c[found.c + offset]) {
+            let cell = rows[found.r].c[found.c + offset];
+            if (cell && cell.v !== null) return cell.f ? cell.f : String(cell.v);
+          }
+          return '---';
+        }
 
-        const banhoOuroQtd = getVal(3, 8);  // I4
-        const banhoPrataQtd = getVal(3, 9); // J4
-        const pesoTotal = getVal(5, 9);     // J6
-        const qtdTotal = getVal(6, 9);      // J7
-        const temLado = getVal(1, 9);       // J2
+        // Extrai dados pelo nome exato do campo na planilha
+        const cliente = getAbaixo("Nome do Cliente");
+        const lote = getAbaixo("Lote");
+        const pesoUnit = getAbaixo("Peso Unt") !== '---' ? getAbaixo("Peso Unt") : getAbaixo("Peso Unitario");
+        const modelo = getAbaixo("Modelo");
+        const codigoProd = getAbaixo("Codigo Produto") !== '---' ? getAbaixo("Codigo Produto") : getAbaixo("Código Produto");
 
-        const categoria = getVal(4, 10);    // K5
-        const fornecedor = getVal(6, 10);   // K7
-        const corrente = getVal(27, 10);    // K28
-        const tamanho = getVal(4, 12);      // M5
-        const valorBruto = getFmt(7, 12);   // M8
+        const fornecedor = getAoLado("Fornecedor") !== '---' ? getAoLado("Fornecedor") : getAbaixo("Fornecedor");
+        const categoria = getAoLado("Categoria") !== '---' ? getAoLado("Categoria") : getAbaixo("Categoria");
+        const temLado = getAoLado("Tem Lado") !== '---' ? getAoLado("Tem Lado") : getAoLado("Tem Lado?");
+        const tamanho = getAoLado("Tamanho") !== '---' ? getAoLado("Tamanho") : getAbaixo("Tamanho");
 
-        const banhoOuroVal = getFmt(20, 11);  // L21
-        const banhoPrataVal = getFmt(22, 11); // L23
-        const vernizVal = getFmt(24, 11);     // L25
-        const insumosVal = getFmt(26, 11);    // L27
+        const banhoOuroQtd = getAoLado("Ouro") !== '---' ? getAoLado("Ouro") : "0";
+        const banhoPrataQtd = getAoLado("Prata") !== '---' ? getAoLado("Prata") : "0";
 
-        // Lista de serviços dinamica
-        const servicos = [
-          { nome: "Inspeção", qtd: getVal(10, 9), total: getFmt(10, 12) },
-          { nome: "Fotografia", qtd: getVal(11, 9), total: getFmt(11, 12) },
-          { nome: "Cadastro Externo", qtd: getVal(12, 9), total: getFmt(12, 12) },
-          { nome: "Etiqueta", qtd: getVal(13, 9), total: getFmt(13, 12) },
-          { nome: "Encarte", qtd: getVal(14, 9), total: getFmt(14, 12) },
-          { nome: "Cravação Buril", qtd: getVal(15, 9), total: getFmt(15, 12) },
-          { nome: "Colagem", qtd: getVal(16, 9), total: getFmt(16, 12) },
-          { nome: "Montagem", qtd: getVal(17, 9), total: getFmt(17, 12) },
-          { nome: "Reposição", qtd: getVal(18, 9), total: getFmt(18, 12) }
-        ];
+        const valorBruto = getAoLado("Valor Bruto") !== '---' ? getAoLado("Valor Bruto") : (getAoLado("Orcamento por Modelo") !== '---' ? getAoLado("Orcamento por Modelo") : 'R$ 0,00');
 
-        document.getElementById('lbl-lote').innerText = 'LOTE ' + (lote || '---');
+        const banhoOuroVal = getAoLado("Custo Banho Ouro");
+        const banhoPrataVal = getAoLado("Custo Banho Prata");
+        const vernizVal = getAoLado("Verniz Cataforetico") !== '---' ? getAoLado("Verniz Cataforetico") : getAoLado("Verniz");
+        const insumosVal = getAoLado("Insumos");
 
+        // Serviços dinâmicos
+        const listaServicosNomes = ["Inspeção", "Fotografia", "Cadastro Externo", "Etiqueta", "Encarte", "Cravação Buril", "Colagem", "Montagem", "Reposição"];
         let servicosHTML = '';
-        servicos.forEach(s => {
+
+        listaServicosNomes.forEach(nome => {
+          let qtd = getAoLado(nome, 2) !== '---' ? getAoLado(nome, 2) : getAoLado(nome, 1);
+          let total = getAoLado(nome, 3) !== '---' ? getAoLado(nome, 3) : 'R$ 0,00';
+
           servicosHTML += `
             <tr>
-              <td>${s.nome}</td>
-              <td style="text-align: center;">${s.qtd || 0}</td>
-              <td class="val-total">${s.total || 'R$ 0,00'}</td>
+              <td>${nome}</td>
+              <td style="text-align: center;">${qtd !== '---' ? qtd : 0}</td>
+              <td class="val-total">${total}</td>
             </tr>
           `;
         });
+
+        document.getElementById('lbl-lote').innerText = 'LOTE ' + (lote !== '---' ? lote : '---');
 
         const html = `
           <div class="section-header">INFORMAÇÕES DO MODELO</div>
@@ -245,13 +258,10 @@
             <div class="info-item"><label>MODELO</label><span>${modelo}</span></div>
             <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${codigoProd}</span></div>
             <div class="info-item"><label>PESO UNITÁRIO</label><span>${pesoUnit} g</span></div>
-            <div class="info-item"><label>PESO TOTAL</label><span>${pesoTotal}</span></div>
             <div class="info-item"><label>TAMANHO</label><span>${tamanho}</span></div>
             <div class="info-item"><label>TEM LADO?</label><span>${temLado}</span></div>
             <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${banhoOuroQtd}</span></div>
             <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${banhoPrataQtd}</span></div>
-            <div class="info-item"><label>ADICIONAL CORRENTE</label><span>${corrente}</span></div>
-            <div class="info-item"><label>QTD TOTAL PEÇAS</label><span>${qtdTotal} pçs</span></div>
           </div>
 
           <div class="section-header">SERVIÇOS & COMPOSIÇÃO</div>
@@ -290,11 +300,11 @@
         document.getElementById('main-card').innerHTML = html;
 
       } catch (err) {
-        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR DADOS. VERIFIQUE SE A PLANILHA ESTÁ PÚBLICA NO DRIVE.</div>';
+        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO LER DADOS. VERIFIQUE SE A PLANILHA ESTÁ COMPARTILHADA COM "QUALQUER PESSOA COM O LINK".</div>';
       }
     }
 
-    window.onload = carregarDados;
+    window.onload = carregarDadosInteligentes;
   </script>
 </body>
 </html>
