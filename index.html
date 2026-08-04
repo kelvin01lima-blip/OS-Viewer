@@ -147,7 +147,7 @@
     </header>
 
     <div class="card-os" id="main-card">
-      <div class="loading">ANALISANDO ESTRUTURA DA PLANILHA...</div>
+      <div class="loading">EXTRAINDO ESTRUTURA EXACT-CELL...</div>
     </div>
   </div>
 
@@ -155,7 +155,7 @@
     const urlParams = new URLSearchParams(window.location.search);
     const planId = urlParams.get('id') || '';
 
-    async function carregarDadosInteligentes() {
+    async function carregarDadosCirurgicos() {
       if (!planId) {
         document.getElementById('main-card').innerHTML = '<div class="loading">NENHUMA PLANILHA SELECIONADA</div>';
         return;
@@ -170,83 +170,62 @@
         const json = JSON.parse(jsonString);
         const rows = json.table.rows;
 
-        // Mapeia todas as células da planilha em uma busca textual
-        let mapVal = {};
-        
-        for (let r = 0; r < rows.length; r++) {
-          if (!rows[r] || !rows[r].c) continue;
-          for (let c = 0; c < rows[r].c.length; c++) {
-            let cell = rows[r].c[c];
-            if (cell && cell.v !== null) {
-              let valStr = String(cell.v).trim();
-              let valFmt = cell.f ? cell.f : valStr;
-
-              // Guarda a posição do texto encontrado
-              mapVal[valStr.toLowerCase()] = { r: r, c: c, val: valStr, fmt: valFmt };
+        // Função de busca inteligente por células mescladas na tabela direita
+        function getCel(r, c) {
+          try {
+            if (rows[r] && rows[r].c && rows[r].c[c] && rows[r].c[c].v !== null) {
+              return rows[r].c[c].f ? rows[r].c[c].f : String(rows[r].c[c].v);
             }
-          }
-        }
-
-        // Função para achar o valor que está LOGO ABAIXO de um rótulo
-        function getAbaixo(rotulo) {
-          let found = mapVal[rotulo.toLowerCase()];
-          if (found && rows[found.r + 1] && rows[found.r + 1].c[found.c]) {
-            let cell = rows[found.r + 1].c[found.c];
-            if (cell && cell.v !== null) return cell.f ? cell.f : String(cell.v);
-          }
+          } catch(e) {}
           return '---';
         }
 
-        // Função para achar o valor que está AO LADO DIREITO de um rótulo
-        function getAoLado(rotulo, offset = 1) {
-          let found = mapVal[rotulo.toLowerCase()];
-          if (found && rows[found.r] && rows[found.r].c[found.c + offset]) {
-            let cell = rows[found.r].c[found.c + offset];
-            if (cell && cell.v !== null) return cell.f ? cell.f : String(cell.v);
-          }
-          return '---';
-        }
+        // Mapeamento direto do layout oficial da S.O.S
+        const cliente = getCel(6, 4) !== '---' ? getCel(6, 4) : getCel(6, 3); // Ulli Joias
+        const lote = getCel(6, 6);       // 122
+        const pesoUnit = getCel(6, 8);   // 1.3
+        const fornecedor = getCel(6, 9); // Xangai
+        const modelo = getCel(9, 7);     // 4993
+        const codigoProd = getCel(11, 3);// AX 001341 W
+        const qtdTotalPeças = getCel(11, 7); // 15
+        const valorBruto = getCel(11, 9); // R$ 3,70
 
-        // Extrai dados pelo nome exato do campo na planilha
-        const cliente = getAbaixo("Nome do Cliente");
-        const lote = getAbaixo("Lote");
-        const pesoUnit = getAbaixo("Peso Unt") !== '---' ? getAbaixo("Peso Unt") : getAbaixo("Peso Unitario");
-        const modelo = getAbaixo("Modelo");
-        const codigoProd = getAbaixo("Codigo Produto") !== '---' ? getAbaixo("Codigo Produto") : getAbaixo("Código Produto");
+        const categoria = getCel(4, 9);  // Anel
+        const tamanho = getCel(4, 11);    // 16cm
+        const banhoOuroQtd = getCel(2, 6);  // 7
+        const banhoPrataQtd = getCel(2, 7); // 8
 
-        const fornecedor = getAoLado("Fornecedor") !== '---' ? getAoLado("Fornecedor") : getAbaixo("Fornecedor");
-        const categoria = getAoLado("Categoria") !== '---' ? getAoLado("Categoria") : getAbaixo("Categoria");
-        const temLado = getAoLado("Tem Lado") !== '---' ? getAoLado("Tem Lado") : getAoLado("Tem Lado?");
-        const tamanho = getAoLado("Tamanho") !== '---' ? getAoLado("Tamanho") : getAbaixo("Tamanho");
+        // Custos Adicionais
+        const banhoOuroVal = getCel(20, 9);  // R$ 5,81
+        const banhoPrataVal = getCel(21, 9); // R$ 3,29
+        const vernizVal = getCel(22, 9);     // R$ 0,51
+        const insumosVal = getCel(23, 9);    // R$ 2,19
 
-        const banhoOuroQtd = getAoLado("Ouro") !== '---' ? getAoLado("Ouro") : "0";
-        const banhoPrataQtd = getAoLado("Prata") !== '---' ? getAoLado("Prata") : "0";
+        // Serviços (linhas 14 a 22 da tabela direita)
+        const listaServicos = [
+          { nome: "Inspeção", qtd: getCel(14, 7), total: getCel(14, 9) },
+          { nome: "Fotografia", qtd: getCel(15, 7), total: getCel(15, 9) },
+          { nome: "Cadastro Externo", qtd: getCel(16, 7), total: getCel(16, 9) },
+          { nome: "Etiqueta", qtd: getCel(17, 7), total: getCel(17, 9) },
+          { nome: "Encarte", qtd: getCel(18, 7), total: getCel(18, 9) },
+          { nome: "Cravação Buril", qtd: getCel(19, 7), total: getCel(19, 9) },
+          { nome: "Colagem", qtd: getCel(20, 7), total: getCel(20, 9) },
+          { nome: "Montagem", qtd: getCel(21, 7), total: getCel(21, 9) },
+          { nome: "Reposição", qtd: getCel(22, 7), total: getCel(22, 9) }
+        ];
 
-        const valorBruto = getAoLado("Valor Bruto") !== '---' ? getAoLado("Valor Bruto") : (getAoLado("Orcamento por Modelo") !== '---' ? getAoLado("Orcamento por Modelo") : 'R$ 0,00');
+        document.getElementById('lbl-lote').innerText = 'LOTE ' + lote;
 
-        const banhoOuroVal = getAoLado("Custo Banho Ouro");
-        const banhoPrataVal = getAoLado("Custo Banho Prata");
-        const vernizVal = getAoLado("Verniz Cataforetico") !== '---' ? getAoLado("Verniz Cataforetico") : getAoLado("Verniz");
-        const insumosVal = getAoLado("Insumos");
-
-        // Serviços dinâmicos
-        const listaServicosNomes = ["Inspeção", "Fotografia", "Cadastro Externo", "Etiqueta", "Encarte", "Cravação Buril", "Colagem", "Montagem", "Reposição"];
         let servicosHTML = '';
-
-        listaServicosNomes.forEach(nome => {
-          let qtd = getAoLado(nome, 2) !== '---' ? getAoLado(nome, 2) : getAoLado(nome, 1);
-          let total = getAoLado(nome, 3) !== '---' ? getAoLado(nome, 3) : 'R$ 0,00';
-
+        listaServicos.forEach(s => {
           servicosHTML += `
             <tr>
-              <td>${nome}</td>
-              <td style="text-align: center;">${qtd !== '---' ? qtd : 0}</td>
-              <td class="val-total">${total}</td>
+              <td>${s.nome}</td>
+              <td style="text-align: center;">${s.qtd !== '---' ? s.qtd : 0}</td>
+              <td class="val-total">${s.total !== '---' ? s.total : 'R$ 0,00'}</td>
             </tr>
           `;
         });
-
-        document.getElementById('lbl-lote').innerText = 'LOTE ' + (lote !== '---' ? lote : '---');
 
         const html = `
           <div class="section-header">INFORMAÇÕES DO MODELO</div>
@@ -255,13 +234,13 @@
             <div class="info-item"><label>LOTE</label><span style="color: var(--cyan-glow);">${lote}</span></div>
             <div class="info-item"><label>FORNECEDOR</label><span>${fornecedor}</span></div>
             <div class="info-item"><label>CATEGORIA</label><span>${categoria}</span></div>
-            <div class="info-item"><label>MODELO</label><span>${modelo}</span></div>
+            <div class="info-item"><label>MODELO</label><span style="color: var(--cyan-glow); font-size: 1.2rem;">${modelo}</span></div>
             <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${codigoProd}</span></div>
             <div class="info-item"><label>PESO UNITÁRIO</label><span>${pesoUnit} g</span></div>
             <div class="info-item"><label>TAMANHO</label><span>${tamanho}</span></div>
-            <div class="info-item"><label>TEM LADO?</label><span>${temLado}</span></div>
             <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${banhoOuroQtd}</span></div>
             <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${banhoPrataQtd}</span></div>
+            <div class="info-item"><label>QTD TOTAL PEÇAS</label><span>${qtdTotalPeças} pçs</span></div>
           </div>
 
           <div class="section-header">SERVIÇOS & COMPOSIÇÃO</div>
@@ -300,11 +279,11 @@
         document.getElementById('main-card').innerHTML = html;
 
       } catch (err) {
-        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO LER DADOS. VERIFIQUE SE A PLANILHA ESTÁ COMPARTILHADA COM "QUALQUER PESSOA COM O LINK".</div>';
+        document.getElementById('main-card').innerHTML = '<div class="loading" style="color:var(--magenta-glow);">ERRO AO CARREGAR PLANILHA.</div>';
       }
     }
 
-    window.onload = carregarDadosInteligentes;
+    window.onload = carregarDadosCirurgicos;
   </script>
 </body>
 </html>
