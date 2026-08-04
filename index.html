@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>S.O.S - Área do Cliente</title>
+  <title>S.O.S - Área do Cliente CYBER</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg-dark: #080b10;
-      --panel-bg: rgba(13, 20, 33, 0.95);
+      --bg-dark: #05080e;
+      --panel-bg: rgba(10, 16, 26, 0.95);
       --cyan-glow: #00f0ff;
       --magenta-glow: #ff0055;
-      --border-color: rgba(0, 240, 255, 0.4);
+      --green-glow: #00ff66;
+      --border-color: rgba(0, 240, 255, 0.5);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -21,87 +22,123 @@
     body {
       background-color: var(--bg-dark);
       background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.15) 0%, transparent 60%),
-        linear-gradient(rgba(0, 240, 255, 0.03) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.03) 1px, transparent 1px);
+        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.2) 0%, transparent 70%),
+        linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
       background-size: 100% 100%, 20px 20px, 20px 20px;
       color: #fff;
       font-family: 'Rajdhani', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 10px;
+      align-items: center;
+      padding: 12px;
+      overflow-x: hidden;
     }
 
+    /* TOPO FUTURISTA HUD */
     header {
+      width: 100%;
+      max-width: 500px;
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
-      padding: 10px 16px;
-      border-radius: 10px;
-      margin-bottom: 10px;
+      padding: 12px 18px;
+      border-radius: 8px;
+      margin-bottom: 12px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
+      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+      position: relative;
     }
 
-    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; }
-    .brand-title span { color: var(--cyan-glow); }
+    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; }
+    .brand-title span { color: var(--cyan-glow); text-shadow: 0 0 10px var(--cyan-glow); }
 
-    .lote-badge {
-      background: rgba(0, 240, 255, 0.15);
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(0, 240, 255, 0.12);
       border: 1px solid var(--cyan-glow);
       color: var(--cyan-glow);
       padding: 4px 10px;
       font-family: 'Orbitron', sans-serif;
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       font-weight: bold;
       border-radius: 4px;
     }
 
-    /* MOLDURA FUTURISTA */
-    .cyber-frame-wrapper {
-      flex: 1;
-      min-height: 85vh;
-      position: relative;
-      background: #ffffff;
-      border: 2px solid var(--cyan-glow);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 0 25px rgba(0, 240, 255, 0.3);
-      display: flex;
-      flex-direction: column;
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--green-glow);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--green-glow);
+      animation: pulse 1.5s infinite;
     }
 
-    .frame-header {
-      background: #0d1421;
-      padding: 8px 15px;
+    @keyframes pulse {
+      0% { opacity: 0.3; }
+      50% { opacity: 1; }
+      100% { opacity: 0.3; }
+    }
+
+    /* PAINEL HOLOGRÁFICO QUE ENVELOPA A TABELA */
+    .cyber-card {
+      width: 100%;
+      max-width: 500px;
+      background: rgba(13, 20, 33, 0.95);
+      border: 2px solid var(--cyan-glow);
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0, 240, 255, 0.35), inset 0 0 15px rgba(0, 240, 255, 0.1);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .card-header {
+      background: #090e18;
+      padding: 10px 15px;
       font-family: 'Orbitron', sans-serif;
       font-size: 0.75rem;
       color: var(--cyan-glow);
       border-bottom: 1px solid var(--border-color);
       display: flex;
       justify-content: space-between;
+      align-items: center;
       letter-spacing: 1px;
     }
 
-    .iframe-container {
+    /* MÁSCARA DE CORTE - ESCONDE O VAZIO BRANCO DA PLANILHA */
+    .table-crop-container {
       width: 100%;
-      height: 100%;
-      flex: 1;
+      height: 650px;
       position: relative;
+      overflow: hidden;
       background: #ffffff;
-      overflow: auto;
-      display: flex;
-      justify-content: center; /* Centraliza a tabela na tela */
     }
 
+    /* IFRAME AJUSTADO PARA FOCAR SÓ NA TABELA DA ESQUERDA */
     iframe {
-      width: 100%;
-      height: 100%;
-      min-height: 700px;
+      position: absolute;
+      top: -15px;
+      left: -5px;
+      width: 110%;
+      height: 720px;
       border: none;
+    }
+
+    /* DECORAÇÃO FUTURISTA INFERIOR */
+    .card-footer {
+      background: #090e18;
+      padding: 10px 15px;
+      border-top: 1px solid var(--border-color);
+      font-family: 'Orbitron', sans-serif;
+      font-size: 0.7rem;
+      color: rgba(255, 255, 255, 0.6);
+      display: flex;
+      justify-content: space-between;
     }
 
     .loading {
@@ -120,16 +157,24 @@
 
   <header>
     <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
-    <div class="lote-badge">ÁREA DO CLIENTE</div>
+    <div class="status-badge">
+      <div class="dot"></div> CLIENTE HUD
+    </div>
   </header>
 
-  <div class="cyber-frame-wrapper">
-    <div class="frame-header">
-      <span>// ORÇAMENTO DO MODELO</span>
-      <span style="color: var(--magenta-glow);">● AO VIVO</span>
+  <div class="cyber-card">
+    <div class="card-header">
+      <span>// MATRIZ OS - RESUMO DO MODELO</span>
+      <span style="color: var(--magenta-glow);">LIVE</span>
     </div>
-    <div class="iframe-container" id="display-area">
-      <div class="loading">CARREGANDO DADOS DO CLIENTE...</div>
+
+    <div class="table-crop-container" id="display-area">
+      <div class="loading">CARREGANDO HOLOGRAMA DA OS...</div>
+    </div>
+
+    <div class="card-footer">
+      <span>SISTEMA CYBER OS</span>
+      <span style="color: var(--cyan-glow);">S.O.S DIGITAL</span>
     </div>
   </div>
 
@@ -138,7 +183,7 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Puxa a aba 'Cliente' mantendo a formatação completa e original da planilha
+      // Puxa a aba 'Cliente' com recorte focado na tabela das colunas A-E
       const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/pubhtml?gid=1682700545&single=true&widget=false&headers=false&chrome=false`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
