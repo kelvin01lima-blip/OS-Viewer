@@ -37,11 +37,7 @@
       align-items: flex-start;
     }
 
-    .container {
-      width: 100%;
-      max-width: 650px;
-      margin: 0 auto;
-    }
+    .container { width: 100%; max-width: 650px; margin: 0 auto; }
 
     header {
       background: var(--panel-bg);
@@ -56,12 +52,7 @@
       clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
     }
 
-    .brand-title {
-      font-family: 'Orbitron', sans-serif;
-      font-size: 1.2rem;
-      font-weight: 800;
-      color: #fff;
-    }
+    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.2rem; font-weight: 800; color: #fff; }
     .brand-title span { color: var(--cyan-glow); }
 
     .lote-badge {
@@ -86,31 +77,22 @@
     .info-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 12px;
       margin-bottom: 20px;
       background: rgba(4, 8, 15, 0.6);
-      padding: 12px;
+      padding: 15px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    .info-item label {
-      font-size: 0.75rem;
-      color: var(--text-dim);
-      text-transform: uppercase;
-      display: block;
-    }
-    .info-item span {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #fff;
-    }
+    .info-item label { font-size: 0.7rem; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; }
+    .info-item span { font-size: 1.05rem; font-weight: 700; color: #fff; }
 
     .section-header {
       font-family: 'Orbitron', sans-serif;
       font-size: 0.85rem;
       color: var(--cyan-glow);
-      margin: 15px 0 10px 0;
+      margin: 20px 0 10px 0;
       text-transform: uppercase;
       letter-spacing: 1px;
       display: flex;
@@ -119,12 +101,7 @@
     }
     .section-header::before { content: '//'; color: var(--magenta-glow); }
 
-    table.cyber-table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-bottom: 15px;
-    }
-
+    table.cyber-table { width: 100%; border-collapse: collapse; margin-bottom: 15px; }
     table.cyber-table th {
       background: rgba(0, 240, 255, 0.08);
       color: var(--cyan-glow);
@@ -135,17 +112,8 @@
       border-bottom: 1px solid var(--border-color);
     }
 
-    table.cyber-table td {
-      padding: 10px 8px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      font-size: 0.95rem;
-    }
-
-    .val-total {
-      font-weight: bold;
-      color: var(--green-glow);
-      text-align: right;
-    }
+    table.cyber-table td { padding: 10px 8px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); font-size: 0.95rem; }
+    .val-total { font-weight: bold; color: var(--green-glow); text-align: right; }
 
     .total-box {
       background: rgba(0, 240, 255, 0.05);
@@ -166,13 +134,7 @@
       text-shadow: 0 0 10px var(--green-glow);
     }
 
-    .loading {
-      text-align: center;
-      padding: 40px;
-      font-family: 'Orbitron', sans-serif;
-      color: var(--cyan-glow);
-      letter-spacing: 2px;
-    }
+    .loading { text-align: center; padding: 40px; font-family: 'Orbitron', sans-serif; color: var(--cyan-glow); letter-spacing: 2px; }
   </style>
 </head>
 <body>
@@ -184,12 +146,15 @@
     </header>
 
     <div class="card-os" id="main-card">
-      <div class="loading" id="loading-txt">SINCRO DE DADOS COM DRIVE...</div>
+      <div class="loading">SINCRO DE DADOS COM DRIVE...</div>
     </div>
   </div>
 
   <script>
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwe5487-DqVaD9jBbBKb-INxi70ANWwqIcImeEbGspjIEMyYQctvGYGnbbno-I8L8CG/exec";
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const planId = urlParams.get('id') || '';
 
     function carregarDados() {
       const callbackName = 'cb_' + Math.round(100000 * Math.random());
@@ -204,7 +169,7 @@
 
       const script = document.createElement('script');
       script.id = callbackName;
-      script.src = SCRIPT_URL + '?callback=' + callbackName;
+      script.src = SCRIPT_URL + '?id=' + encodeURIComponent(planId) + '&callback=' + callbackName;
       document.body.appendChild(script);
     }
 
@@ -230,23 +195,22 @@
       }
 
       const htmlContent = `
+        <div class="section-header">INFORMAÇÕES DO MODELO</div>
         <div class="info-grid">
-          <div class="info-item">
-            <label>CLIENTE</label>
-            <span>${data.cliente || '---'}</span>
-          </div>
-          <div class="info-item">
-            <label>MODELO</label>
-            <span>${data.modelo || '---'}</span>
-          </div>
-          <div class="info-item">
-            <label>QTD TOTAL PEÇAS</label>
-            <span>${data.qtdTotal || 0} pçs</span>
-          </div>
-          <div class="info-item">
-            <label>LOTE</label>
-            <span style="color: var(--cyan-glow);">${data.lote || '---'}</span>
-          </div>
+          <div class="info-item"><label>CLIENTE</label><span>${data.cliente || '---'}</span></div>
+          <div class="info-item"><label>LOTE</label><span style="color: var(--cyan-glow);">${data.lote || '---'}</span></div>
+          <div class="info-item"><label>FORNECEDOR</label><span>${data.fornecedor || '---'}</span></div>
+          <div class="info-item"><label>CATEGORIA</label><span>${data.categoria || '---'}</span></div>
+          <div class="info-item"><label>MODELO / CÓDIGO</label><span>${data.modelo || '---'}</span></div>
+          <div class="info-item"><label>CÓDIGO PRODUTO</label><span>${data.codigoProd || '---'}</span></div>
+          <div class="info-item"><label>PESO UNITÁRIO</label><span>${data.pesoUnit || 0} g</span></div>
+          <div class="info-item"><label>PESO TOTAL</label><span>${data.pesoTotal || '---'}</span></div>
+          <div class="info-item"><label>TAMANHO</label><span>${data.tamanho || '---'}</span></div>
+          <div class="info-item"><label>TEM LADO?</label><span>${data.temLado || '---'}</span></div>
+          <div class="info-item"><label>BANHO OURO (QTD)</label><span style="color: var(--yellow-glow);">${data.banhoOuroQtd || 0}</span></div>
+          <div class="info-item"><label>BANHO PRATA (QTD)</label><span style="color: #cbd5e1;">${data.banhoPrataQtd || 0}</span></div>
+          <div class="info-item"><label>ADICIONAL CORRENTE</label><span>${data.corrente || '---'}</span></div>
+          <div class="info-item"><label>QTD TOTAL PEÇAS</label><span>${data.qtdTotal || 0} pçs</span></div>
         </div>
 
         <div class="section-header">SERVIÇOS & COMPOSIÇÃO</div>
