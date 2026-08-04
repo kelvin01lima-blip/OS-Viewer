@@ -30,20 +30,20 @@
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-      padding: 12px;
+      padding: 10px;
     }
 
     header {
       background: var(--panel-bg);
       border: 1px solid var(--border-color);
-      padding: 12px 18px;
+      padding: 10px 16px;
       border-radius: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
-      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
     }
 
     .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 800; }
@@ -60,9 +60,10 @@
       border-radius: 4px;
     }
 
+    /* MOLDURA FUTURISTA */
     .cyber-frame-wrapper {
       flex: 1;
-      min-height: 80vh;
+      min-height: 85vh;
       position: relative;
       background: #ffffff;
       border: 2px solid var(--cyan-glow);
@@ -90,12 +91,16 @@
       height: 100%;
       flex: 1;
       position: relative;
+      background: #ffffff;
+      overflow: auto;
+      display: flex;
+      justify-content: center; /* Centraliza a tabela na tela */
     }
 
     iframe {
       width: 100%;
       height: 100%;
-      min-height: 600px;
+      min-height: 700px;
       border: none;
     }
 
@@ -133,8 +138,8 @@
     const planId = urlParams.get('id') || '';
 
     if (planId) {
-      // Puxa APENAS a aba chamada 'Cliente'
-      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/gviz/tq?tqx=out:html&sheet=Cliente`;
+      // Puxa a aba 'Cliente' mantendo a formatação completa e original da planilha
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/pubhtml?gid=1682700545&single=true&widget=false&headers=false&chrome=false`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
       document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
