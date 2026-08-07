@@ -82,7 +82,6 @@
       100% { opacity: 0.3; }
     }
 
-    /* MOLDURA FUTURISTA */
     .cyber-card {
       width: 100%;
       max-width: 480px;
@@ -158,10 +157,10 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const planId = urlParams.get('id') || '';
+    // Aceita tanto ?id= quanto ?p= para facilitar o encurtamento do QR Code
+    const planId = urlParams.get('id') || urlParams.get('p') || '';
 
     if (planId) {
-      // Pega dinamicamente a aba chamada 'Cliente' para QUALQUER planilha que passar na URL (?id=...)
       const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?sheet=Cliente&widget=false&headers=false&chrome=false`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
