@@ -4,108 +4,125 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>S.O.S - Área do Cliente</title>
+  
+  <!-- Fontes limpas inspiradas no Dashboard (Inter e Montserrat) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-dark: #05080e;
-      --panel-bg: rgba(10, 16, 26, 0.98);
-      --cyan-glow: #00f0ff;
-      --magenta-glow: #ff0055;
-      --green-glow: #00ff66;
-      --border-color: rgba(0, 240, 255, 0.5);
+      --bg-light: #edf2f7;
+      --card-bg: #ffffff;
+      --text-main: #1a202c;
+      --text-muted: #718096;
+      --brand-primary: #2b4251; /* Azul Escuro / Grafite elegante */
+      --brand-accent: #f26522;  /* Laranja Lote/OS */
+      --green-status: #38a169;
+      --border-soft: #e2e8f0;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background-color: var(--bg-dark);
-      background-image: 
-        radial-gradient(circle at 50% 0%, rgba(0, 240, 255, 0.2) 0%, transparent 70%),
-        linear-gradient(rgba(0, 240, 255, 0.05) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 240, 255, 0.05) 1px, transparent 1px);
-      background-size: 100% 100%, 20px 20px, 20px 20px;
-      color: #fff;
-      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg-light);
+      background-image: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 12px;
+      padding: 16px;
     }
 
+    /* Cabeçalho Minimalista e Clean */
     header {
       width: 100%;
-      max-width: 480px;
-      background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      padding: 12px 18px;
-      border-radius: 8px;
-      margin-bottom: 12px;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      padding: 14px 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 0 20px rgba(0, 240, 255, 0.25);
-      clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 15px 100%, 0 calc(100% - 15px));
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
     }
 
-    .brand-title { font-family: 'Orbitron', sans-serif; font-size: 1.1rem; font-weight: 900; letter-spacing: 1px; }
-    .brand-title span { color: var(--cyan-glow); text-shadow: 0 0 10px var(--cyan-glow); }
+    .brand-title { 
+      font-family: 'Montserrat', sans-serif; 
+      font-size: 1.05rem; 
+      font-weight: 800; 
+      color: var(--brand-primary);
+      letter-spacing: -0.5px;
+    }
+    .brand-title span { color: var(--brand-accent); }
 
     .status-badge {
       display: flex;
       align-items: center;
       gap: 6px;
-      background: rgba(0, 240, 255, 0.12);
-      border: 1px solid var(--cyan-glow);
-      color: var(--cyan-glow);
-      padding: 4px 10px;
-      font-family: 'Orbitron', sans-serif;
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+      color: var(--green-status);
+      padding: 6px 12px;
+      font-family: 'Inter', sans-serif;
       font-size: 0.75rem;
-      font-weight: bold;
-      border-radius: 4px;
+      font-weight: 600;
+      border-radius: 20px;
     }
 
     .dot {
       width: 8px;
       height: 8px;
-      background-color: var(--green-glow);
+      background-color: var(--green-status);
       border-radius: 50%;
-      box-shadow: 0 0 8px var(--green-glow);
-      animation: pulse 1.5s infinite;
+      animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
-      0% { opacity: 0.3; }
+      0% { opacity: 0.4; }
       50% { opacity: 1; }
-      100% { opacity: 0.3; }
+      100% { opacity: 0.4; }
     }
 
-    .cyber-card {
+    /* Card Principal Estilo Dashboard Clean */
+    .clean-card {
       width: 100%;
-      max-width: 480px;
-      background: #ffffff;
-      border: 2px solid var(--cyan-glow);
-      border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0, 240, 255, 0.35);
+      max-width: 500px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border-soft);
+      border-top: 4px solid var(--brand-accent); /* Detalhe do topo Laranja igual aos cards da referência */
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       overflow: hidden;
       display: flex;
       flex-direction: column;
     }
 
     .card-header {
-      background: #090e18;
-      padding: 10px 15px;
-      font-family: 'Orbitron', sans-serif;
+      background: #ffffff;
+      padding: 14px 20px;
+      font-family: 'Montserrat', sans-serif;
       font-size: 0.75rem;
-      color: var(--cyan-glow);
-      border-bottom: 1px solid var(--border-color);
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-soft);
       display: flex;
       justify-content: space-between;
-      letter-spacing: 1px;
+      align-items: center;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
     }
 
+    .card-header .live-tag {
+      color: var(--brand-accent);
+      font-weight: 800;
+    }
+
+    /* Wrapper do Iframe com cantos suaves */
     .iframe-wrapper {
       width: 100%;
       height: 680px;
@@ -125,13 +142,16 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      font-family: 'Orbitron', sans-serif;
-      color: var(--cyan-glow);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--brand-primary);
       text-align: center;
-      background: #05080e;
-      padding: 20px;
-      border-radius: 8px;
-      border: 1px solid var(--cyan-glow);
+      background: #f7fafc;
+      padding: 16px 28px;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
@@ -140,31 +160,30 @@
   <header>
     <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
     <div class="status-badge">
-      <div class="dot"></div> CLIENTE HUD
+      <div class="dot"></div> AO VIVO
     </div>
   </header>
 
-  <div class="cyber-card">
+  <div class="clean-card">
     <div class="card-header">
-      <span>// RESUMO DO MODELO</span>
-      <span style="color: var(--magenta-glow);">AO VIVO</span>
+      <span>RESUMO DO MODELO</span>
+      <span class="live-tag">CLIENTE</span>
     </div>
 
     <div class="iframe-wrapper" id="display-area">
-      <div class="loading">CARREGANDO DADOS...</div>
+      <div class="loading">Carregando dados...</div>
     </div>
   </div>
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    // Aceita tanto ?id= quanto ?p= para facilitar o encurtamento do QR Code
     const planId = urlParams.get('id') || urlParams.get('p') || '';
 
     if (planId) {
       const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?sheet=Cliente&widget=false&headers=false&chrome=false`;
       document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
     } else {
-      document.getElementById('display-area').innerHTML = `<div class="loading" style="color:var(--magenta-glow);">NENHUMA PLANILHA INFORMADA</div>`;
+      document.getElementById('display-area').innerHTML = `<div class="loading" style="color:#e53e3e;">NENHUMA PLANILHA INFORMADA</div>`;
     }
   </script>
 </body>
