@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>S.O.S - Área do Cliente</title>
   
-  <!-- Fontes limpas inspiradas no Dashboard (Inter e Montserrat) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
@@ -16,8 +15,8 @@
       --card-bg: #ffffff;
       --text-main: #1a202c;
       --text-muted: #718096;
-      --brand-primary: #2b4251; /* Azul Escuro / Grafite elegante */
-      --brand-accent: #f26522;  /* Laranja Lote/OS */
+      --brand-primary: #2b4251;
+      --brand-accent: #f26522;
       --green-status: #38a169;
       --border-soft: #e2e8f0;
     }
@@ -36,7 +35,6 @@
       padding: 16px;
     }
 
-    /* Cabeçalho Minimalista e Clean */
     header {
       width: 100%;
       max-width: 500px;
@@ -88,14 +86,13 @@
       100% { opacity: 0.4; }
     }
 
-    /* Card Principal Estilo Dashboard Clean */
     .clean-card {
       width: 100%;
       max-width: 500px;
       background: var(--card-bg);
       border-radius: 20px;
       border: 1px solid var(--border-soft);
-      border-top: 4px solid var(--brand-accent); /* Detalhe do topo Laranja igual aos cards da referência */
+      border-top: 4px solid var(--brand-accent);
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
       overflow: hidden;
       display: flex;
@@ -122,7 +119,6 @@
       font-weight: 800;
     }
 
-    /* Wrapper do Iframe com cantos suaves */
     .iframe-wrapper {
       width: 100%;
       height: 680px;
@@ -177,7 +173,16 @@
 
   <script>
     const urlParams = new URLSearchParams(window.location.search);
-    const planId = urlParams.get('id') || urlParams.get('p') || '';
+    // Pega qualquer parâmetro (?id=, ?p=) ou assume o primeiro valor direto na URL se for o ID puro
+    let planId = urlParams.get('id') || urlParams.get('p') || '';
+    
+    if (!planId) {
+      // Se acessarem direto com o ID na query sem parâmetro
+      const rawQuery = window.location.search.replace('?', '').trim();
+      if (rawQuery.length > 20) {
+        planId = rawQuery;
+      }
+    }
 
     if (planId) {
       const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?sheet=Cliente&widget=false&headers=false&chrome=false`;
