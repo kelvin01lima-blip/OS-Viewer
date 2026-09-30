@@ -2,184 +2,193 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <title>S.O.S - Gerador de Etiquetas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>S.O.S - Área do Cliente</title>
+  
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;800&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+  
   <style>
     :root {
-      --bg-dark: #1e293b;
-      --panel-bg: #334155;
-      --orange-sos: #f97316;
-      --orange-glow: rgba(249, 115, 22, 0.4);
-      --border-color: rgba(249, 115, 22, 0.5);
-      --text-dim: #cbd5e1;
+      --bg-light: #edf2f7;
+      --card-bg: #ffffff;
+      --text-main: #1a202c;
+      --text-muted: #718096;
+      --brand-primary: #2b4251;
+      --brand-accent: #f26522;
+      --green-status: #38a169;
+      --border-soft: #e2e8f0;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
     body {
-      background-color: var(--bg-dark);
-      color: #f8fafc;
-      font-family: 'Rajdhani', sans-serif;
+      background-color: var(--bg-light);
+      background-image: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 20px;
-    }
-    header {
-      width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center;
-      padding: 15px 25px; margin-bottom: 20px; background: var(--panel-bg);
-      border: 1px solid var(--border-color);
-      border-radius: 6px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-    }
-    h1 { font-family: 'Orbitron', sans-serif; font-size: 1.3rem; color: #fff; letter-spacing: 1px; }
-    h1 span { color: var(--orange-sos); }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 1000px; }
-    @media (max-width: 800px) { .grid { grid-template-columns: 1fr; } }
-    .panel { background: var(--panel-bg); border: 1px solid var(--border-color); padding: 25px; border-radius: 6px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-    .panel-title { font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--orange-sos); margin-bottom: 15px; letter-spacing: 1px; }
-    .input-group { margin-bottom: 15px; }
-    label { display: block; font-size: 0.8rem; color: var(--text-dim); margin-bottom: 5px; text-transform: uppercase; font-weight: 600; }
-    input[type="text"] {
-      width: 100%; padding: 11px; background: #1e293b; border: 1px solid var(--border-color);
-      color: #fff; font-family: 'Rajdhani', sans-serif; font-size: 1rem; border-radius: 4px; outline: none;
-    }
-    input[type="text"]:focus {
-      border-color: var(--orange-sos);
-      box-shadow: 0 0 8px var(--orange-glow);
-    }
-    .btn {
-      width: 100%; padding: 12px; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; font-weight: bold;
-      background: var(--orange-sos); color: #fff; border: none; border-radius: 4px; cursor: pointer; margin-top: 10px;
-      box-shadow: 0 4px 12px var(--orange-glow);
-      transition: background 0.2s;
-    }
-    .btn:hover { background: #ea580c; }
-    .preview-stage { display: flex; justify-content: center; align-items: center; min-height: 220px; background: #1e293b; border: 1px dashed var(--border-color); border-radius: 4px; padding: 15px; }
-    
-    .bopp-label {
-      width: 165px; height: 105px; background: #fff; padding: 4px; color: #000;
-      display: flex; flex-direction: column; align-items: center; justify-content: space-around;
-    }
-    
-    #qrcode-box {
-      width: 65px;
-      height: 65px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    #qrcode-box canvas, #qrcode-box img {
-      width: 100% !important;
-      height: 100% !important;
-      image-rendering: pixelated;
+      padding: 16px;
     }
 
-    .label-code { font-family: Arial, sans-serif; font-size: 8px; font-weight: bold; color: #000; text-align: center; }
-    .label-subtext { font-family: Arial, sans-serif; font-size: 6px; color: #333; text-align: center; }
-    
-    @media print {
-      @page { size: 33mm 21mm; margin: 0; }
-      body { background: #fff; padding: 0; margin: 0; display: block; }
-      header, .panel:first-child, .panel-title { display: none; }
-      .grid { display: block; width: 33mm; }
-      .panel { border: none; background: transparent; padding: 0; }
-      .preview-stage { background: transparent; border: none; min-height: 0; padding: 0; }
-      .bopp-label { width: 33mm; height: 21mm; padding: 1mm; justify-content: flex-start; }
-      
-      #qrcode-box {
-        width: 14mm !important;
-        height: 14mm !important;
-      }
-      #qrcode-box canvas, #qrcode-box img {
-        width: 14mm !important;
-        height: 14mm !important;
-        image-rendering: pixelated;
-      }
-      .label-code { font-size: 5pt; }
-      .label-subtext { font-size: 4pt; }
+    header {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border: 1px solid var(--border-soft);
+      padding: 14px 20px;
+      border-radius: 16px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    }
+
+    .brand-title { 
+      font-family: 'Montserrat', sans-serif; 
+      font-size: 1.05rem; 
+      font-weight: 800; 
+      color: var(--brand-primary);
+      letter-spacing: -0.5px;
+    }
+    .brand-title span { color: var(--brand-accent); }
+
+    .status-badge {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #f0fff4;
+      border: 1px solid #c6f6d5;
+      color: var(--green-status);
+      padding: 6px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 20px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--green-status);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0% { opacity: 0.4; }
+      50% { opacity: 1; }
+      100% { opacity: 0.4; }
+    }
+
+    .clean-card {
+      width: 100%;
+      max-width: 500px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      border: 1px solid var(--border-soft);
+      border-top: 4px solid var(--brand-accent);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-header {
+      background: #ffffff;
+      padding: 14px 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border-soft);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .card-header .live-tag {
+      color: var(--brand-accent);
+      font-weight: 800;
+    }
+
+    .iframe-wrapper {
+      width: 100%;
+      height: 680px;
+      position: relative;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    .loading {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: 'Montserrat', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--brand-primary);
+      text-align: center;
+      background: #f7fafc;
+      padding: 16px 28px;
+      border-radius: 12px;
+      border: 1px solid var(--border-soft);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
   </style>
 </head>
 <body>
 
   <header>
-    <h1>S.O.S <span>SOLUÇÕES</span> // QR ETIQUETAS</h1>
-    <div style="color: #4ade80; font-size: 0.8rem; font-family: 'Orbitron'; font-weight: bold;">● SISTEMA ATIVO</div>
+    <div class="brand-title">S.O.S <span>SEMIJOIAS</span></div>
+    <div class="status-badge">
+      <div class="dot"></div> AO VIVO
+    </div>
   </header>
 
-  <div class="grid">
-    <div class="panel">
-      <div class="panel-title">// DADOS DA ETIQUETA</div>
-      
-      <div class="input-group">
-        <label for="link-input">Link da Planilha (Google Drive)</label>
-        <input type="text" id="link-input" placeholder="Cole o link da planilha aqui..." oninput="gerar()">
-      </div>
-
-      <div class="input-group">
-        <label for="code-input">Título da Etiqueta</label>
-        <input type="text" id="code-input" value="LOTE 141 - MOD 5855" oninput="atualizarTexto()">
-      </div>
-
-      <div class="input-group">
-        <label for="subtext-input">Tipo de Peça</label>
-        <input type="text" id="subtext-input" value="ANEL" oninput="atualizarTexto()">
-      </div>
-
-      <button class="btn" onclick="window.print()">IMPRIMIR ETIQUETA</button>
+  <div class="clean-card">
+    <div class="card-header">
+      <span>RESUMO DO MODELO</span>
+      <span class="live-tag">CLIENTE</span>
     </div>
 
-    <div class="panel">
-      <div class="panel-title">// PRÉ-VISUALIZAÇÃO (33x21mm)</div>
-      <div class="preview-stage">
-        <div class="bopp-label">
-          <div id="qrcode-box"></div>
-          <div>
-            <div class="label-code" id="lbl-code">LOTE 141 - MOD 5855</div>
-            <div class="label-subtext" id="lbl-subtext">ANEL</div>
-          </div>
-        </div>
-      </div>
+    <div class="iframe-wrapper" id="display-area">
+      <div class="loading">Carregando dados...</div>
     </div>
   </div>
 
   <script>
-    function atualizarTexto() {
-      document.getElementById('lbl-code').innerText = document.getElementById('code-input').value || ' ';
-      document.getElementById('lbl-subtext').innerText = document.getElementById('subtext-input').value || ' ';
-    }
+    const urlParams = new URLSearchParams(window.location.search);
+    let planId = urlParams.get('id') || urlParams.get('p') || '';
 
-    function gerar() {
-      var raw = document.getElementById('link-input').value.trim();
-      var urlFinal = "https://kelvin01lima-blip.github.io/OS-Viewer/";
-
-      if (raw.indexOf("docs.google.com/spreadsheets/d/") !== -1) {
-        var m = raw.match(/\/d\/([a-zA-Z0-9-_]+)/);
-        if (m && m[1]) {
-          urlFinal += "?p=" + m[1];
-        }
-      } else if (raw !== "") {
-        urlFinal = raw;
+    // Se o QR Code leu apenas o ID bruto da planilha diretamente
+    if (!planId) {
+      const cleanPath = window.location.search.replace('?', '').trim();
+      if (cleanPath.length > 20) {
+        planId = cleanPath;
       }
-
-      document.getElementById('qrcode-box').innerHTML = "";
-
-      new QRCode(document.getElementById('qrcode-box'), {
-        text: urlFinal,
-        width: 128,
-        height: 128,
-        colorDark: "#000000",
-        colorLight: "#ffffff",
-        correctLevel: QRCode.CorrectLevel.L
-      });
-
-      atualizarTexto();
     }
 
-    window.onload = gerar;
+    if (planId) {
+      const embedUrl = `https://docs.google.com/spreadsheets/d/${planId}/htmlembed?sheet=Cliente&widget=false&headers=false&chrome=false`;
+      document.getElementById('display-area').innerHTML = `<iframe src="${embedUrl}"></iframe>`;
+    } else {
+      document.getElementById('display-area').innerHTML = `<div class="loading" style="color:#e53e3e;">NENHUMA PLANILHA INFORMADA</div>`;
+    }
   </script>
 </body>
 </html>
